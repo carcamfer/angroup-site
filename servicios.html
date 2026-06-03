@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ANGROUP — Servicios de Ingeniería Industrial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #05071A;
+      --bg2: #080C24;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.08);
+      --border-glow: rgba(56,189,248,0.25);
+      --blue: #38BDF8;
+      --purple: #A78BFA;
+      --green: #34D399;
+      --orange: #FB923C;
+      --pink: #F472B6;
+      --text: #E2E8F0;
+      --muted: #94A3B8;
+      --heading: #F1F5F9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    h1,h2,h3,h4,h5 { font-family: 'Space Grotesk', sans-serif; color: var(--heading); }
+
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .bg-orb {
+      position: fixed; border-radius: 50%; filter: blur(120px);
+      pointer-events: none; z-index: 0;
+    }
+    .orb-1 { width: 600px; height: 600px; top: -200px; left: -150px; background: rgba(56,189,248,0.07); }
+    .orb-2 { width: 500px; height: 500px; bottom: 0; right: -100px; background: rgba(167,139,250,0.07); }
+    .orb-3 { width: 400px; height: 400px; top: 30%; right: 20%; background: rgba(52,211,153,0.05); }
+
+    .glass {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .glass-hover { transition: all 0.25s ease; }
+    .glass-hover:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-glow);
+      transform: translateY(-4px);
+    }
+
+    .navbar {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 40px); max-width: 1200px;
+      z-index: 100; border-radius: 16px;
+      background: rgba(5,7,26,0.8);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .glow-blue { color: var(--blue); text-shadow: 0 0 30px rgba(56,189,248,0.4); }
+    .glow-purple { color: var(--purple); text-shadow: 0 0 30px rgba(167,139,250,0.4); }
+
+    .grad-text {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0EA5E9, #7C3AED);
+      color: #fff; font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; border-radius: 12px;
+      transition: all 0.2s ease; cursor: pointer;
+      border: none; position: relative; overflow: hidden;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-primary::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, #38BDF8, #A78BFA);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary span { position: relative; z-index: 1; }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-glow);
+      color: var(--blue); font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; border-radius: 12px; cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-secondary:hover { background: rgba(56,189,248,0.08); border-color: var(--blue); }
+
+    /* Habla con un asesor */
+    .advisor-wrap { position: relative; }
+    .btn-advisor {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(52,211,153,0.12), rgba(56,189,248,0.12));
+      border: 1px solid rgba(52,211,153,0.3);
+      color: var(--green); font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; font-size: 13px; border-radius: 12px; cursor: pointer;
+      padding: 10px 14px;
+      transition: all 0.2s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-advisor:hover { background: rgba(52,211,153,0.18); border-color: var(--green); }
+    .advisor-menu {
+      display: none; position: absolute; left: 0; right: 0; bottom: calc(100% + 8px);
+      z-index: 30; flex-direction: column; gap: 6px; padding: 8px;
+      border-radius: 14px;
+      background: rgba(8,12,36,0.97);
+      border: 1px solid var(--border-glow);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    }
+    .advisor-wrap.open .advisor-menu { display: flex; }
+    .advisor-menu a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      font-size: 13px; font-weight: 500; text-decoration: none; color: var(--text);
+      transition: all 0.18s ease;
+    }
+    .advisor-menu a:hover { background: rgba(255,255,255,0.06); }
+    .advisor-menu a .ico { width: 28px; height: 28px; border-radius: 8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .advisor-menu a small { display:block; color: var(--muted); font-size: 11px; font-weight: 400; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .badge-blue { background: rgba(56,189,248,0.12); color: var(--blue); border: 1px solid rgba(56,189,248,0.2); }
+    .badge-green { background: rgba(52,211,153,0.12); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+    .badge-purple { background: rgba(167,139,250,0.12); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+    .badge-orange { background: rgba(251,146,60,0.12); color: var(--orange); border: 1px solid rgba(251,146,60,0.2); }
+    .badge-pink { background: rgba(244,114,182,0.12); color: var(--pink); border: 1px solid rgba(244,114,182,0.2); }
+    .badge-yellow { background: rgba(251,191,36,0.12); color: #FBBF24; border: 1px solid rgba(251,191,36,0.25); }
+    .badge-red { background: rgba(239,68,68,0.12); color: #F87171; border: 1px solid rgba(239,68,68,0.2); }
+    .badge-teal { background: rgba(20,184,166,0.12); color: #2DD4BF; border: 1px solid rgba(20,184,166,0.2); }
+
+    .service-card {
+      border-radius: 22px; overflow: hidden;
+      transition: all 0.3s ease;
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+    .service-card:hover .service-img-bg {
+      transform: scale(1.05);
+    }
+    .service-img {
+      height: 200px; position: relative; overflow: hidden;
+      background-size: cover; background-position: center;
+    }
+    .service-img-bg {
+      position: absolute; inset: 0;
+      transition: transform 0.5s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .service-img-bg svg { filter: drop-shadow(0 0 30px currentColor); opacity: 0.6; }
+    .service-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(5,7,26,0.7) 100%);
+    }
+    .service-tag-row {
+      position: absolute; top: 16px; left: 16px; right: 16px;
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+      z-index: 2;
+    }
+
+    .hero-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3rem; font-weight: 700; line-height: 1;
+    }
+
+    .area-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 30px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px; color: var(--muted);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .process-step {
+      position: relative; padding-left: 56px;
+    }
+    .process-step::before {
+      content: ''; position: absolute;
+      left: 20px; top: 48px; bottom: -20px;
+      width: 1px; background: linear-gradient(180deg, rgba(56,189,248,0.4), rgba(167,139,250,0.05));
+    }
+    .process-step:last-child::before { display: none; }
+    .process-num {
+      position: absolute; left: 0; top: 0;
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(56,189,248,0.15), rgba(167,139,250,0.15));
+      border: 1px solid var(--border-glow);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--blue);
+    }
+
+    /* Logo hero — screen blend hace que el fondo negro del PNG desaparezca */
+    .logo-hero {
+      width: 300px; max-width: 72vw; height: auto;
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 0 50px rgba(56,189,248,0.25));
+    }
+    @media (max-width: 640px) { .logo-hero { width: 220px; } }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation: fadeUp 0.6s ease forwards; }
+    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+    .pulse { animation: pulse 3s ease-in-out infinite; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    section { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar px-6 py-3">
+    <div class="flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2" style="text-decoration:none;">
+        <img src="angroup.png" alt="ANGROUP" style="height:42px;width:42px;border-radius:10px;object-fit:cover;" />
+      </a>
+      <div class="hidden md:flex items-center gap-1">
+        <a href="index.html" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all" style="text-decoration:none;">Inicio</a>
+        <a href="#servicios" class="px-4 py-2 text-sm font-medium rounded-lg transition-all" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:var(--blue);text-decoration:none;font-family:'Space Grotesk',sans-serif;font-weight:600;">Servicios</a>
+        <a href="#contacto" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all" style="text-decoration:none;">Contacto</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="btn-secondary hidden md:inline-flex px-4 py-2 text-sm" style="text-decoration:none;">← Volver</a>
+        <a href="#contacto" class="btn-primary px-5 py-2 text-sm" style="text-decoration:none;"><span>Cotizar proyecto</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- LOGO HERO -->
+  <header class="pt-32 pb-2 px-5">
+    <div class="max-w-6xl mx-auto flex justify-center fade-up">
+      <img src="angroup.png" alt="ANGROUP — We Engineer Growth" class="logo-hero" />
+    </div>
+  </header>
+
+  <!-- SERVICIOS -->
+  <section id="servicios" class="pt-6 pb-16 px-5">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12 fade-up">
+        <p class="text-sm text-blue-400 font-semibold mb-2" style="font-family:'Space Grotesk',sans-serif;">CATÁLOGO DE SERVICIOS</p>
+        <h2 class="text-4xl lg:text-5xl font-bold mb-4">Lo que podemos construir contigo</h2>
+        <p class="text-slate-400 max-w-2xl mx-auto">Soluciones integrales de ingeniería para manufactura moderna, conectada y eficiente.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- 1. AUTOMATIZACIÓN -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#0A1628,#0E2147);">
+            <div class="service-img-bg" style="color:var(--blue);">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><circle cx="7" cy="10" r="1.5"/><circle cx="12" cy="10" r="1.5"/><circle cx="17" cy="10" r="1.5"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-blue">Automatización</span>
+              <span class="badge badge-green"><span style="width:5px;height:5px;background:var(--green);border-radius:50%;display:inline-block;"></span>Activo</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Automatización industrial</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">PLCs Allen Bradley, Siemens, Omron. Integración SCADA, HMI, redes industriales Profinet/Modbus y celdas de control completas.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">PLC</span>
+              <span class="area-pill">SCADA</span>
+              <span class="area-pill">HMI</span>
+              <span class="area-pill">Redes</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Automatizaci%C3%B3n%20industrial%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Automatizaci%C3%B3n%20industrial&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Automatizaci%C3%B3n%20industrial%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. ROBÓTICA -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#1A0808,#2A1010);">
+            <div class="service-img-bg" style="color:#F87171;">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/><path d="M9 11l-2-4M15 11l2-4"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-red">Robótica</span>
+              <span class="badge badge-blue">FANUC · ABB · KUKA</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Celdas robotizadas</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Integración de robots industriales: pick & place, soldadura robotizada, paletizado, ensamble automatizado y celdas colaborativas (cobots).</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">FANUC</span>
+              <span class="area-pill">ABB</span>
+              <span class="area-pill">Cobots</span>
+              <span class="area-pill">Integración</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Celdas%20robotizadas%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Celdas%20robotizadas&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Celdas%20robotizadas%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. DRONES -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#0A1A10,#102510);">
+            <div class="service-img-bg" style="color:var(--green);">
+              <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="5" cy="5" r="2.5"/><circle cx="19" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><line x1="5" y1="5" x2="12" y2="12"/><line x1="19" y1="5" x2="12" y2="12"/><line x1="5" y1="19" x2="12" y2="12"/><line x1="19" y1="19" x2="12" y2="12"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-green">Drones</span>
+              <span class="badge badge-yellow">🚁 Aéreo</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Drones industriales</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Inspección aérea de plantas, mapeo topográfico, termografía de subestaciones, vigilancia perimetral, gemelos digitales con fotogrametría y LiDAR.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">Termografía</span>
+              <span class="area-pill">LiDAR</span>
+              <span class="area-pill">Mapeo</span>
+              <span class="area-pill">Inspección</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Drones%20industriales%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Drones%20industriales&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Drones%20industriales%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. VISIÓN ARTIFICIAL -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#0A001A,#16002A);">
+            <div class="service-img-bg" style="color:var(--purple);">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-purple">Visión Artificial</span>
+              <span class="badge badge-pink">IA</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Visión artificial e IA</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Inspección automática de calidad, detección de defectos con deep learning, OCR industrial, control dimensional y trazabilidad por visión en línea de producción.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">Cognex</span>
+              <span class="area-pill">Keyence</span>
+              <span class="area-pill">Deep Learning</span>
+              <span class="area-pill">OCR</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Visi%C3%B3n%20artificial%20e%20IA%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Visi%C3%B3n%20artificial%20e%20IA&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Visi%C3%B3n%20artificial%20e%20IA%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. IoT INDUSTRIAL -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#1A0E00,#2A1800);">
+            <div class="service-img-bg" style="color:var(--orange);">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="2"/><path d="M16.5 7.5a6 6 0 0 1 0 9M7.5 7.5a6 6 0 0 0 0 9"/><path d="M19.5 4.5a10 10 0 0 1 0 15M4.5 4.5a10 10 0 0 0 0 15"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-orange">IoT · Industria 4.0</span>
+              <span class="badge badge-blue">Cloud</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">IoT industrial e Industria 4.0</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Conectividad de planta, sensores LoRa/NB-IoT, dashboards en tiempo real, OEE, monitoreo remoto, gemelos digitales y plataformas AWS / Azure IoT.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">OEE</span>
+              <span class="area-pill">Edge</span>
+              <span class="area-pill">Gemelo Digital</span>
+              <span class="area-pill">AWS IoT</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22IoT%20industrial%20e%20Industria%204.0%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20IoT%20industrial%20e%20Industria%204.0&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22IoT%20industrial%20e%20Industria%204.0%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. DISEÑO MECÁNICO -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#001A1A,#002828);">
+            <div class="service-img-bg" style="color:#2DD4BF;">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="2" x2="12" y2="22"/><path d="M2 8.5l10 6.5 10-6.5"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-teal">Diseño Mecánico</span>
+              <span class="badge badge-blue">CAD/CAM/CAE</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Ingeniería de producto</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Diseño mecánico 3D con SolidWorks, análisis FEA por elemento finito, simulación CFD, GD&T, ingeniería inversa y validación de prototipos.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">SolidWorks</span>
+              <span class="area-pill">FEA</span>
+              <span class="area-pill">CFD</span>
+              <span class="area-pill">GD&T</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Ingenier%C3%ADa%20de%20producto%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Ingenier%C3%ADa%20de%20producto&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Ingenier%C3%ADa%20de%20producto%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. PROTOTIPADO -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#1A0A10,#250A18);">
+            <div class="service-img-bg" style="color:#FBBF24;">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/><line x1="12" y1="6" x2="12" y2="12"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-yellow">Manufactura Aditiva</span>
+              <span class="badge badge-blue">3D · CNC</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Prototipado rápido</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Impresión 3D FDM, SLA, SLS, FDM industrial, mecanizado CNC de prototipos, moldes de inyección rápidos y fixtures para línea de producción.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">Impresión 3D</span>
+              <span class="area-pill">CNC</span>
+              <span class="area-pill">Moldes</span>
+              <span class="area-pill">Fixtures</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Prototipado%20r%C3%A1pido%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Prototipado%20r%C3%A1pido&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Prototipado%20r%C3%A1pido%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. MAQUINARIA A MEDIDA -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#0A0A1A,#10102A);">
+            <div class="service-img-bg" style="color:var(--blue);">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-blue">Maquinaria especial</span>
+              <span class="badge badge-green">Llave en mano</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Maquinaria a la medida</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Diseño y fabricación de equipos especiales: bancos de prueba, dispensadores, máquinas de ensamble, sistemas de transporte, manipuladores neumáticos.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">Bancos de prueba</span>
+              <span class="area-pill">Conveyors</span>
+              <span class="area-pill">Neumática</span>
+              <span class="area-pill">Hidráulica</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Maquinaria%20a%20la%20medida%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Maquinaria%20a%20la%20medida&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Maquinaria%20a%20la%20medida%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. SOFTWARE INDUSTRIAL -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#0A1A1A,#103030);">
+            <div class="service-img-bg" style="color:#2DD4BF;">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-teal">Software industrial</span>
+              <span class="badge badge-purple">MES · ERP</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Software industrial a medida</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Sistemas MES, trazabilidad, integración ERP-SAP, dashboards en tiempo real, apps móviles para piso de planta y APIs para conectar equipos.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">MES</span>
+              <span class="area-pill">SAP</span>
+              <span class="area-pill">Dashboards</span>
+              <span class="area-pill">APIs</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Software%20industrial%20a%20medida%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Software%20industrial%20a%20medida&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Software%20industrial%20a%20medida%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. MANTENIMIENTO PREDICTIVO -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#1A0E1A,#2A1830);">
+            <div class="service-img-bg" style="color:var(--pink);">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-pink">Predictivo</span>
+              <span class="badge badge-orange">Vibraciones</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Mantenimiento predictivo</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Monitoreo de condición: análisis de vibraciones, termografía infrarroja, ultrasonido, aceites y machine learning para predicción de fallas.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">Vibración</span>
+              <span class="area-pill">Termografía</span>
+              <span class="area-pill">ML Predictivo</span>
+              <span class="area-pill">CBM</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Mantenimiento%20predictivo%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Mantenimiento%20predictivo&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Mantenimiento%20predictivo%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 11. END / INSPECCIÓN -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#0A1828,#0E2147);">
+            <div class="service-img-bg" style="color:var(--blue);">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/><line x1="11" y1="8" x2="11" y2="14"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-blue">Ensayos no destructivos</span>
+              <span class="badge badge-green">END</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Inspección industrial / END</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Ensayos no destructivos: ultrasonido, rayos X, líquidos penetrantes, partículas magnéticas, espesores. Inspección de soldadura conforme a AWS/ASME.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">UT</span>
+              <span class="area-pill">RT</span>
+              <span class="area-pill">PT/MT</span>
+              <span class="area-pill">AWS/ASME</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Inspecci%C3%B3n%20industrial%20/%20END%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Inspecci%C3%B3n%20industrial%20/%20END&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Inspecci%C3%B3n%20industrial%20/%20END%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 12. CONSULTORÍA / SAFETY -->
+        <div class="service-card glass glass-hover">
+          <div class="service-img" style="background:linear-gradient(135deg,#0A1A0A,#0E2210);">
+            <div class="service-img-bg" style="color:var(--green);">
+              <svg width="110" height="110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+            </div>
+            <div class="service-img-overlay"></div>
+            <div class="service-tag-row">
+              <span class="badge badge-green">Safety · Compliance</span>
+              <span class="badge badge-blue">ISO · STPS</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <h3 class="font-bold text-xl mb-2">Consultoría e implementación</h3>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Implementación de ISO 9001/14001/45001, IATF 16949, sistemas Lean, ergonomía industrial, auditorías técnicas y cumplimiento de normas STPS.</p>
+            <div class="flex flex-wrap gap-2 pt-3" style="border-top:1px solid var(--border);">
+              <span class="area-pill">ISO</span>
+              <span class="area-pill">IATF</span>
+              <span class="area-pill">Lean</span>
+              <span class="area-pill">NOMs STPS</span>
+            </div>
+            <div class="advisor-wrap mt-4">
+              <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Habla con un asesor
+              </button>
+              <div class="advisor-menu">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Consultor%C3%ADa%20e%20implementaci%C3%B3n%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener">
+                  <span class="ico" style="background:rgba(52,211,153,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                  </span>
+                  <span>WhatsApp<small>+52 656 372 7555</small></span>
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20servicio%3A%20Consultor%C3%ADa%20e%20implementaci%C3%B3n&body=Hola%20ANGROUP%2C%20me%20interesa%20el%20servicio%20de%20%22Consultor%C3%ADa%20e%20implementaci%C3%B3n%22.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor.">
+                  <span class="ico" style="background:rgba(56,189,248,0.15);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                  </span>
+                  <span>Correo<small>vinculacion@angroup.mx</small></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA / CONTACTO -->
+  <section id="contacto" class="py-16 px-5">
+    <div class="max-w-5xl mx-auto">
+      <div class="glass rounded-3xl p-10 md:p-14 text-center" style="border-color:var(--border-glow);background:linear-gradient(135deg,rgba(56,189,248,0.05),rgba(167,139,250,0.05));">
+        <div class="badge badge-blue mb-5" style="display:inline-flex;">
+          <span style="width:6px;height:6px;background:#38BDF8;border-radius:50%;display:inline-block;" class="pulse"></span>
+          Cotización sin costo · Respuesta en 24 hrs
+        </div>
+        <h2 class="text-3xl md:text-5xl font-bold mb-5">¿Listo para automatizar tu próximo proyecto?</h2>
+        <p class="text-slate-400 max-w-2xl mx-auto mb-8">
+          Cuéntanos qué problema quieres resolver y proponemos la solución técnica más eficiente.
+          Atendemos toda la frontera norte y EE. UU.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
+          <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20gustar%C3%ADa%20cotizar%20un%20proyecto." target="_blank" rel="noopener" class="btn-primary px-7 py-3 text-sm" style="text-decoration:none;"><span>💬 WhatsApp →</span></a>
+          <a href="mailto:vinculacion@angroup.mx" class="btn-secondary px-7 py-3 text-sm" style="text-decoration:none;">✉️ vinculacion@angroup.mx</a>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6 pt-8" style="border-top:1px solid var(--border);">
+          <div>
+            <div class="text-xs text-slate-500 mb-1" style="font-family:'Space Grotesk',sans-serif;">CORREO</div>
+            <div class="text-sm text-slate-300">vinculacion@angroup.mx</div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 mb-1" style="font-family:'Space Grotesk',sans-serif;">WHATSAPP</div>
+            <div class="text-sm text-slate-300">+52 656 372 7555</div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 mb-1" style="font-family:'Space Grotesk',sans-serif;">UBICACIÓN</div>
+            <div class="text-sm text-slate-300">Av. Vicente Guerrero 8830, Of. 202</div>
+            <div class="text-sm text-slate-300">Ciudad Juárez, Chih.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-12 px-5 mt-8" style="border-top:1px solid var(--border);">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <img src="angroup.png" alt="ANGROUP" style="height:40px;width:40px;border-radius:10px;object-fit:cover;" />
+        <span class="text-xs text-slate-500">vinculacion@angroup.mx · +52 656 372 7555</span>
+      </div>
+      <p class="text-xs text-slate-600">© 2026 ANGROUP. División de Ingeniería. Ciudad Juárez, Chih.</p>
+      <a href="index.html" class="text-xs text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">← Volver a la página principal</a>
+    </div>
+  </footer>
+
+  <script>
+    function toggleAdvisor(e, btn) {
+      e.stopPropagation();
+      var wrap = btn.closest('.advisor-wrap');
+      var isOpen = wrap.classList.contains('open');
+      document.querySelectorAll('.advisor-wrap.open').forEach(function(w){ w.classList.remove('open'); });
+      if (!isOpen) wrap.classList.add('open');
+    }
+    document.addEventListener('click', function(){
+      document.querySelectorAll('.advisor-wrap.open').forEach(function(w){ w.classList.remove('open'); });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ANGROUP — Capacitación Industrial Presencial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #05071A;
+      --bg2: #080C24;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.08);
+      --border-glow: rgba(56,189,248,0.25);
+      --blue: #38BDF8;
+      --purple: #A78BFA;
+      --green: #34D399;
+      --text: #E2E8F0;
+      --muted: #94A3B8;
+      --heading: #F1F5F9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    h1,h2,h3,h4,h5 { font-family: 'Space Grotesk', sans-serif; color: var(--heading); }
+
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .bg-orb {
+      position: fixed; border-radius: 50%; filter: blur(120px);
+      pointer-events: none; z-index: 0;
+    }
+    .orb-1 { width: 600px; height: 600px; top: -200px; left: -150px; background: rgba(56,189,248,0.07); }
+    .orb-2 { width: 500px; height: 500px; bottom: 0; right: -100px; background: rgba(167,139,250,0.07); }
+
+    .glass {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .glass-hover:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-glow);
+      transition: all 0.2s ease;
+    }
+
+    .navbar {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 40px); max-width: 1200px;
+      z-index: 100; border-radius: 16px;
+      background: rgba(5,7,26,0.8);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .glow-blue { color: var(--blue); text-shadow: 0 0 30px rgba(56,189,248,0.4); }
+    .glow-purple { color: var(--purple); text-shadow: 0 0 30px rgba(167,139,250,0.4); }
+
+    .grad-text {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0EA5E9, #7C3AED);
+      color: #fff; font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; border-radius: 12px;
+      transition: all 0.2s ease; cursor: pointer;
+      border: none; position: relative; overflow: hidden;
+    }
+    .btn-primary::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, #38BDF8, #A78BFA);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary span { position: relative; z-index: 1; }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-glow);
+      color: var(--blue); font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; border-radius: 12px; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-secondary:hover { background: rgba(56,189,248,0.08); border-color: var(--blue); }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .badge-blue { background: rgba(56,189,248,0.12); color: var(--blue); border: 1px solid rgba(56,189,248,0.2); }
+    .badge-green { background: rgba(52,211,153,0.12); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+    .badge-purple { background: rgba(167,139,250,0.12); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+    .badge-orange { background: rgba(251,146,60,0.12); color: #FB923C; border: 1px solid rgba(251,146,60,0.2); }
+    .badge-yellow { background: rgba(251,191,36,0.12); color: #FBBF24; border: 1px solid rgba(251,191,36,0.25); }
+    .badge-red { background: rgba(239,68,68,0.12); color: #F87171; border: 1px solid rgba(239,68,68,0.2); }
+    .badge-teal { background: rgba(20,184,166,0.12); color: #2DD4BF; border: 1px solid rgba(20,184,166,0.2); }
+
+    .course-card {
+      border-radius: 20px; overflow: hidden; cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none; display: block;
+    }
+    .course-card:hover { transform: translateY(-4px); }
+    .course-card:hover .card-img-overlay { opacity: 1; }
+    .card-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(56,189,248,0.15), transparent);
+      opacity: 0; transition: opacity 0.25s;
+    }
+
+    .stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.5rem; font-weight: 700; line-height: 1;
+    }
+
+    .cat-btn {
+      padding: 8px 20px; border-radius: 10px; font-size: 14px;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .cat-btn.active {
+      background: rgba(56,189,248,0.12);
+      border-color: rgba(56,189,248,0.3);
+      color: var(--blue);
+    }
+    .cat-btn:not(.active) { color: var(--muted); }
+    .cat-btn:not(.active):hover { color: var(--text); background: var(--surface); }
+
+    #chatbot-bubble {
+      position: fixed; bottom: 28px; right: 28px; z-index: 1000;
+    }
+    .chat-trigger {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: linear-gradient(135deg, #0EA5E9, #7C3AED);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 0 30px rgba(56,189,248,0.35);
+      transition: all 0.2s ease; border: none;
+    }
+    .chat-trigger:hover { transform: scale(1.08); }
+    .chat-window {
+      position: absolute; bottom: 74px; right: 0;
+      width: 360px; border-radius: 20px; overflow: hidden;
+      display: none; flex-direction: column;
+      background: #0B0F2A;
+      border: 1px solid var(--border-glow);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 40px rgba(56,189,248,0.1);
+      height: 480px;
+    }
+    .chat-window.open { display: flex; }
+    .chat-header {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(124,58,237,0.15));
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .chat-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, #0EA5E9, #7C3AED);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+      scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+    .msg { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; }
+    .msg-bot {
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      border-radius: 4px 14px 14px 14px; align-self: flex-start; color: var(--text);
+    }
+    .msg-user {
+      background: linear-gradient(135deg, rgba(14,165,233,0.25), rgba(124,58,237,0.25));
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 14px 4px 14px 14px; align-self: flex-end; color: var(--heading);
+    }
+    .chat-quick { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px; }
+    .quick-btn {
+      padding: 6px 12px; border-radius: 20px; font-size: 12px;
+      background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2);
+      color: var(--blue); cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .quick-btn:hover { background: rgba(56,189,248,0.15); }
+    .chat-input-row {
+      display: flex; gap: 8px; padding: 12px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .chat-input {
+      flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-input:focus { border-color: rgba(56,189,248,0.4); }
+    .chat-input::placeholder { color: var(--muted); }
+    .chat-send {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg, #0EA5E9, #7C3AED);
+      border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.2s;
+    }
+    .chat-send:hover { opacity: 0.85; }
+
+    @keyframes ping { 0%{transform:scale(1);opacity:1} 75%,100%{transform:scale(2);opacity:0} }
+    .ping { animation: ping 1.5s cubic-bezier(0,0,0.2,1) infinite; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation: fadeUp 0.6s ease forwards; }
+
+    /* Logo hero — screen blend hace que el fondo negro del PNG desaparezca */
+    .logo-hero {
+      width: 320px; max-width: 74vw; height: auto;
+      mix-blend-mode: screen;
+      filter: drop-shadow(0 0 50px rgba(56,189,248,0.25));
+    }
+    @media (max-width: 640px) { .logo-hero { width: 230px; } }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    section { position: relative; z-index: 1; }
+
+    /* ── Client Logo Carousel ── */
+    .logo-carousel-wrap { position: relative; overflow: hidden; margin-top: 28px; }
+    .logo-carousel-wrap::before,
+    .logo-carousel-wrap::after {
+      content: ''; position: absolute; top: 0; bottom: 0; width: 100px; z-index: 2; pointer-events: none;
+    }
+    .logo-carousel-wrap::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+    .logo-carousel-wrap::after  { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+    .logo-track {
+      display: flex; gap: 20px; width: max-content;
+      animation: scroll-logos 35s linear infinite;
+    }
+    .logo-track:hover { animation-play-state: paused; }
+    @keyframes scroll-logos {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .logo-card {
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 14px;
+      padding: 12px 22px;
+      display: flex; align-items: center; justify-content: center;
+      height: 68px; width: 150px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .logo-card:hover { background: rgba(255,255,255,0.09); border-color: rgba(56,189,248,0.25); }
+    .logo-card img { max-height: 42px; max-width: 120px; object-fit: contain; }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar px-6 py-3">
+    <div class="flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2" style="text-decoration:none;">
+        <img src="angroup.png" alt="ANGROUP" style="height:42px;width:42px;border-radius:10px;object-fit:cover;" />
+      </a>
+      <div class="hidden md:flex items-center gap-1">
+        <a href="#cursos" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all" style="text-decoration:none;">Cursos</a>
+        <a href="#areas" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all" style="text-decoration:none;">Áreas</a>
+        <button onclick="openEvento()" class="px-4 py-2 text-sm font-medium rounded-lg transition-all" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:#FBBF24;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-weight:600;">⚽ EVENTOS</button>
+        <button onclick="openInstructors()" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all" style="background:none;border:none;cursor:pointer;">Instructores STPS</button>
+        <a href="#contacto" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-all" style="text-decoration:none;">Contacto</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="btn-secondary hidden md:block px-4 py-2 text-sm" onclick="openChat()">Hablar con asesor</button>
+        <button class="btn-primary px-5 py-2 text-sm" onclick="document.getElementById('cursos').scrollIntoView({behavior:'smooth'})"><span>Ver cursos</span></button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="pt-32 pb-14 px-5">
+    <div class="max-w-6xl mx-auto w-full fade-up">
+      <div class="text-center mb-4">
+        <div class="flex justify-center mb-7">
+          <img src="angroup.png" alt="ANGROUP — We Engineer Growth" class="logo-hero" />
+        </div>
+        <div class="badge badge-blue mb-5" style="display:inline-flex;">
+          <span style="width:6px;height:6px;background:#38BDF8;border-radius:50%;display:inline-block;"></span>
+          Registro STPS (DC-5) · Ciudad Juárez, Chih.
+        </div>
+        <p class="text-sm text-blue-400 font-semibold mb-3" style="font-family:'Space Grotesk',sans-serif;">¿POR QUÉ ANGROUP?</p>
+        <h1 class="text-4xl lg:text-5xl font-bold mb-4">Formación especializada<br/>para la industria</h1>
+        <!-- Carrusel de clientes -->
+        <div class="logo-carousel-wrap">
+          <div class="logo-track" id="logoTrack">
+            <!-- Logos originales -->
+            <div class="logo-card"><img src="logos/img-046.png" alt="Ford"/></div>
+            <div class="logo-card"><img src="logos/img-035.png" alt="Honeywell"/></div>
+            <div class="logo-card"><img src="logos/img-050.png" alt="Nidec"/></div>
+            <div class="logo-card"><img src="logos/img-026.png" alt="Hubbell"/></div>
+            <div class="logo-card"><img src="logos/img-052.png" alt="Boyd"/></div>
+            <div class="logo-card"><img src="logos/img-037.png" alt="Vitesco Technologies"/></div>
+            <div class="logo-card"><img src="logos/img-054.png" alt="Stoneridge"/></div>
+            <div class="logo-card"><img src="logos/img-033.png" alt="Tecma"/></div>
+            <div class="logo-card"><img src="logos/img-056.png" alt="Kyocera"/></div>
+            <div class="logo-card"><img src="logos/img-058.png" alt="Resideo"/></div>
+            <div class="logo-card"><img src="logos/img-059.png" alt="Weiler"/></div>
+            <!-- Duplicados para loop infinito -->
+            <div class="logo-card"><img src="logos/img-046.png" alt="Ford"/></div>
+            <div class="logo-card"><img src="logos/img-035.png" alt="Honeywell"/></div>
+            <div class="logo-card"><img src="logos/img-050.png" alt="Nidec"/></div>
+            <div class="logo-card"><img src="logos/img-026.png" alt="Hubbell"/></div>
+            <div class="logo-card"><img src="logos/img-052.png" alt="Boyd"/></div>
+            <div class="logo-card"><img src="logos/img-037.png" alt="Vitesco Technologies"/></div>
+            <div class="logo-card"><img src="logos/img-054.png" alt="Stoneridge"/></div>
+            <div class="logo-card"><img src="logos/img-033.png" alt="Tecma"/></div>
+            <div class="logo-card"><img src="logos/img-056.png" alt="Kyocera"/></div>
+            <div class="logo-card"><img src="logos/img-058.png" alt="Resideo"/></div>
+            <div class="logo-card"><img src="logos/img-059.png" alt="Weiler"/></div>
+          </div>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6 mt-8">
+        <a href="servicios.html" target="_blank" class="glass rounded-2xl p-6 glass-hover" style="cursor:pointer;text-decoration:none;color:inherit;display:flex;flex-direction:column;border-color:rgba(56,189,248,0.25);background:rgba(56,189,248,0.04);">
+          <div style="width:48px;height:48px;background:rgba(56,189,248,0.12);border-radius:14px;border:1px solid rgba(56,189,248,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <h3 class="font-bold text-lg mb-2" style="color:var(--blue);">Ingeniería</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Servicios integrales: automatización, drones industriales, IoT, visión artificial, robótica, diseño mecánico, prototipado rápido y desarrollo de software industrial.</p>
+          <span style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;font-weight:700;color:var(--blue);font-family:'Space Grotesk',sans-serif;">VER SERVICIOS →</span>
+        </a>
+        <div class="glass rounded-2xl p-6 glass-hover" style="cursor:pointer;border-color:rgba(251,191,36,0.25);background:rgba(251,191,36,0.04);display:flex;flex-direction:column;" onclick="openEvento()">
+          <div style="width:48px;height:48px;background:rgba(251,191,36,0.1);border-radius:14px;border:1px solid rgba(251,191,36,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <h3 class="font-bold text-lg mb-2" style="color:#FBBF24;">Eventos</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">FC 2026 INDUSTRIA — Torneo Empresarial Mundialista. 48 empresas compiten en formato mundialista. Networking premium, Zona Gaming y Terraza VIP en Cd. Juárez, Chih.</p>
+          <span style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;font-weight:700;color:#FBBF24;font-family:'Space Grotesk',sans-serif;">⚽ VER EVENTO →</span>
+        </div>
+        <a href="#cursos" class="glass rounded-2xl p-6 glass-hover" style="cursor:pointer;text-decoration:none;color:inherit;display:flex;flex-direction:column;border-color:rgba(167,139,250,0.25);background:rgba(167,139,250,0.04);">
+          <div style="width:48px;height:48px;background:rgba(167,139,250,0.12);border-radius:14px;border:1px solid rgba(167,139,250,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <h3 class="font-bold text-lg mb-2" style="color:var(--purple);">Educación</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Una fuerza líder en el fortalecimiento de las capacidades de manufactura, proveedor integral de capacitación, consultoría y soluciones técnicas avanzadas en México y Estados Unidos. Con experiencia en certificaciones críticas, membresía en AIAG y capacitación en Core Tools para el sector automotriz.</p>
+          <span style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;font-weight:700;color:var(--purple);font-family:'Space Grotesk',sans-serif;">VER CURSOS ↓</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORÍAS -->
+  <section id="areas" class="py-8 px-5">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-3 mb-6">
+        <h2 class="text-lg font-semibold text-slate-300" style="font-family:'Space Grotesk',sans-serif;">Explorar por área</h2>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="scrollTabs(-1)" style="flex-shrink:0;width:34px;height:34px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border-glow)';this.style.background='var(--surface-hover)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface)'">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="flex gap-2 overflow-x-auto pb-2" id="categoryTabs" style="scrollbar-width:none;flex:1;">
+          <button class="cat-btn active" data-cat="todos">Todos los cursos</button>
+          <button class="cat-btn" data-cat="manufactura">Manufactura Electrónica</button>
+          <button class="cat-btn" data-cat="seguridad">Seguridad Industrial</button>
+          <button class="cat-btn" data-cat="automotriz">Industria Automotriz</button>
+          <button class="cat-btn" data-cat="lean">Calidad y Mejora Continua</button>
+          <button class="cat-btn" data-cat="iso">Formación ISO</button>
+          <button class="cat-btn" data-cat="soldadura">Soldadura Industrial</button>
+          <button class="cat-btn" data-cat="automatizacion">Automatización</button>
+          <button class="cat-btn" data-cat="diseno">Diseño Mecánico y CAD</button>
+          <button class="cat-btn" data-cat="gerencial">Habilidades Gerenciales</button>
+        </div>
+        <button onclick="scrollTabs(1)" style="flex-shrink:0;width:34px;height:34px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--border-glow)';this.style.background='var(--surface-hover)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface)'">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CURSOS -->
+  <section id="cursos" class="py-12 px-5">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-end justify-between mb-10">
+        <div>
+          <p class="text-sm text-blue-400 font-semibold mb-2" style="font-family:'Space Grotesk',sans-serif;">CAPACITACIÓN INDUSTRIAL PRESENCIAL</p>
+          <h2 class="text-4xl font-bold">Cursos disponibles</h2>
+        </div>
+        <a href="#contacto" class="btn-secondary px-5 py-2 text-sm hidden md:block" style="text-decoration:none;">Solicitar catálogo →</a>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="courseGrid">
+        <!-- cards rendered by JS -->
+
+        <!-- CTA Card (always last) -->
+        <div id="ctaCard" class="glass rounded-2xl p-6 flex flex-col items-center justify-center text-center" style="border-style:dashed;min-height:300px;">
+          <div style="width:56px;height:56px;background:rgba(56,189,248,0.1);border-radius:16px;border:1px solid rgba(56,189,248,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          </div>
+          <h3 class="font-bold text-lg mb-2">¿Buscas un curso específico?</h3>
+          <p class="text-sm text-slate-400 mb-5">Contamos con más de 100 cursos en nuestro catálogo. Un asesor puede orientarte.</p>
+          <button class="btn-primary px-6 py-3 text-sm w-full" onclick="openChat()"><span>Hablar con asesor</span></button>
+        </div>
+        <!-- /cards rendered by JS -->
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- TESTIMONIOS -->
+  <section class="py-16 px-5">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold mb-3">Lo que dicen nuestros clientes</h2>
+        <p class="text-slate-400">Empresas industriales que confían en ANGROUP</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center gap-1 mb-3">
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <p class="text-sm text-slate-300 mb-4 leading-relaxed">"Capacitamos a todo el personal de línea en IPC-A-610. El instructor se adaptó a nuestros turnos sin problema. Los DC-3 llegaron en tiempo."</p>
+          <div class="flex items-center gap-3">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;">RG</div>
+            <div>
+              <div class="text-sm font-semibold text-white" style="font-family:'Space Grotesk',sans-serif;">Roberto G.</div>
+              <div class="text-xs text-slate-500">Gerente de Calidad · Maquiladora Electrónica</div>
+            </div>
+          </div>
+        </div>
+        <div class="glass rounded-2xl p-6" style="border-color:var(--border-glow);">
+          <div class="flex items-center gap-1 mb-3">
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <p class="text-sm text-slate-300 mb-4 leading-relaxed">"El curso de NOM-035 fue exactamente lo que necesitábamos para cumplir con la auditoría. Muy práctico, con ejemplos reales de la industria."</p>
+          <div class="flex items-center gap-3">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#A78BFA);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;">LC</div>
+            <div>
+              <div class="text-sm font-semibold text-white" style="font-family:'Space Grotesk',sans-serif;">Laura C.</div>
+              <div class="text-xs text-slate-500">Recursos Humanos · Industria Automotriz</div>
+            </div>
+          </div>
+        </div>
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center gap-1 mb-3">
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="14" height="14" fill="#FBBF24" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <p class="text-sm text-slate-300 mb-4 leading-relaxed">"Llevamos 2 años trabajando con ANGROUP para capacitar a nuestros ingenieros en Lean Six Sigma. Resultados medibles en los primeros 3 meses."</p>
+          <div class="flex items-center gap-3">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#34D399,#059669);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;">AM</div>
+            <div>
+              <div class="text-sm font-semibold text-white" style="font-family:'Space Grotesk',sans-serif;">Alejandro M.</div>
+              <div class="text-xs text-slate-500">Director de Operaciones · Manufactura</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer id="contacto" class="py-12 px-5 mt-8" style="border-top:1px solid var(--border);">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-4 gap-8 mb-10">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <img src="angroup.png" alt="ANGROUP" style="height:44px;width:44px;border-radius:10px;object-fit:cover;" />
+          </div>
+          <p class="text-sm text-slate-500 leading-relaxed">Capacitación industrial presencial. Registro STPS DC-5. Ciudad Juárez, Chihuahua.</p>
+          <p class="text-sm text-slate-600 mt-3">www.angroup.mx</p>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white mb-4 text-sm" style="font-family:'Space Grotesk',sans-serif;">Áreas de Capacitación</h4>
+          <ul class="space-y-2">
+            <li><a href="#cursos" class="text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">Manufactura Electrónica</a></li>
+            <li><a href="#cursos" class="text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">Seguridad Industrial</a></li>
+            <li><a href="#cursos" class="text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">Industria Automotriz</a></li>
+            <li><a href="#cursos" class="text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">Lean Six Sigma</a></li>
+            <li><a href="#cursos" class="text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">Formación en ISO</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white mb-4 text-sm" style="font-family:'Space Grotesk',sans-serif;">Más Cursos</h4>
+          <ul class="space-y-2">
+            <li><a href="#cursos" class="text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">Soldadura Industrial</a></li>
+            <li><a href="#cursos" class="text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">Automatización</a></li>
+            <li><a href="#cursos" class="text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">Diseño CAD/CAM</a></li>
+            <li><a href="#cursos" class="text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">Habilidades Gerenciales</a></li>
+            <li><button onclick="openInstructors()" class="text-sm text-slate-500 hover:text-white transition-colors" style="background:none;border:none;padding:0;cursor:pointer;">Instructores STPS</button></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-white mb-4 text-sm" style="font-family:'Space Grotesk',sans-serif;">Contacto</h4>
+          <ul class="space-y-3">
+            <li>
+              <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20sus%20cursos." target="_blank" rel="noopener" class="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207z"/></svg>
+                WhatsApp +52 656 372 7555
+              </a>
+            </li>
+            <li>
+              <a href="mailto:vinculacion@angroup.mx" class="flex items-center gap-2 text-sm text-slate-500 hover:text-white transition-colors" style="text-decoration:none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                vinculacion@angroup.mx
+              </a>
+            </li>
+            <li class="flex items-center gap-2 text-sm text-slate-500">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Av. Vicente Guerrero 8830, Of. 202<br/>Col. Hipódromo, C.P. 32400<br/>Ciudad Juárez, Chih.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="pt-6 flex flex-col md:flex-row items-center justify-between gap-4" style="border-top:1px solid var(--border);">
+        <p class="text-xs text-slate-600">© 2026 ANGROUP. Todos los derechos reservados. Registro STPS DC-5.</p>
+        <div class="flex gap-4">
+          <a href="#" class="text-xs text-slate-600 hover:text-slate-400 transition-colors" style="text-decoration:none;">Privacidad</a>
+          <a href="#" class="text-xs text-slate-600 hover:text-slate-400 transition-colors" style="text-decoration:none;">Términos</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CHATBOT -->
+  <div id="chatbot-bubble">
+    <div id="chatNotif" style="position:absolute;top:-3px;right:-3px;width:16px;height:16px;background:#EF4444;border-radius:50%;border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:white;z-index:2;">1</div>
+    <button class="chat-trigger" onclick="toggleChat()" aria-label="Abrir asistente">
+      <svg id="chatIcon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg id="closeIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" style="display:none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-header">
+        <div class="chat-avatar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div>
+          <div class="font-semibold text-white text-sm" style="font-family:'Space Grotesk',sans-serif;">Asesor ANGROUP</div>
+          <div class="flex items-center gap-1 text-xs text-slate-400">
+            <span style="width:6px;height:6px;background:#34D399;border-radius:50%;display:inline-block;"></span>
+            Disponible · Respuesta rápida
+          </div>
+        </div>
+        <button onclick="toggleChat()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg msg-bot">
+          ¡Hola! Soy el asistente de <strong>ANGROUP</strong>. Puedo ayudarte con:<br/><br/>
+          • Elegir el curso adecuado para tu empresa<br/>
+          • Agendar una fecha presencial<br/>
+          • Cotizar grupos y empresas<br/>
+          • Información sobre DC-3 y certificaciones<br/><br/>
+          ¿En qué te puedo ayudar?
+        </div>
+      </div>
+      <div class="chat-quick" id="quickOptions">
+        <button class="quick-btn" onclick="sendQuick('Ver áreas de capacitación')">Ver áreas</button>
+        <button class="quick-btn" onclick="sendQuick('Quiero agendar un curso presencial')">Agendar curso</button>
+        <button class="quick-btn" onclick="sendQuick('¿Cómo funciona el DC-3?')">DC-3</button>
+        <button class="quick-btn" onclick="sendQuick('Hablar con un asesor')">Asesor humano</button>
+      </div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" type="text" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter') sendMessage()" />
+        <button class="chat-send" onclick="sendMessage()" aria-label="Enviar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function scrollTabs(dir) {
+      const tabs = document.getElementById('categoryTabs');
+      tabs.scrollBy({ left: dir * 220, behavior: 'smooth' });
+    }
+
+    // ── Course data ──
+    const COURSES = [
+      // MANUFACTURA ELECTRÓNICA
+      {id:'ipc-a-610',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Certificación IPC',nombre:'IPC-A-610 — Criterios de Aceptabilidad de Ensambles Electrónicos',horas:22,desc:'Criterios de aceptabilidad de ensambles electrónicos. Certificación reconocida internacionalmente por IPC.'},
+      {id:'ipc-jstd001',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Certificación IPC',nombre:'IPC-J-STD-001 — Requisitos de Ensambles Eléctricos y Electrónicos',horas:32,desc:'Requisitos para ensambles eléctricos y electrónicos ensamblados. Estándar internacional de referencia.'},
+      {id:'ipc-7711',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Certificación IPC',nombre:'IPC 7711/7721 — Retrabajo, Modificación y Reparación de Ensambles',horas:32,desc:'Retrabajo, modificación y reparación de ensambles electrónicos conforme al estándar IPC 7711/7721.'},
+      {id:'ipc-whma-620',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Certificación IPC',nombre:'IPC/WHMA A-620 — Requisitos de Ensambles con Cables y Arneses',horas:21,desc:'Requisitos y admisibilidad de ensambles con cables y arneses de cables según estándar IPC/WHMA A-620.'},
+      {id:'esd-control',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'ESD',nombre:'Control ESD para Manufactura Electrónica',horas:1,desc:'Control de descargas electrostáticas en entornos de manufactura electrónica.'},
+      {id:'seguridad-mfg',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Seguridad',nombre:'Seguridad para la Manufactura Electrónica',horas:1,desc:'Principios de seguridad aplicados en entornos de manufactura de ensambles electrónicos.'},
+      {id:'ensamble-operadores',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Operadores',nombre:'Ensamble de Electrónica para Operadores',horas:30,desc:'Formación práctica para operadores en ensamble de componentes electrónicos en línea de producción.'},
+      {id:'arneses-operadores',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Operadores',nombre:'Ensamble de Arneses de Cables para Operadores',horas:20,desc:'Técnicas de ensamble de arneses y cables para operadores de línea con criterios IPC/WHMA.'},
+      {id:'jstd-operadores',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Operadores',nombre:'IPC J-STD-001 para Operadores',horas:8,desc:'Formación operativa basada en el estándar J-STD-001 para personal de línea.'},
+      {id:'610-operadores',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Operadores',nombre:'IPC-A-610 para Operadores',horas:8,desc:'Criterios de aceptabilidad IPC-A-610 orientados a operadores de inspección y ensamble.'},
+      {id:'whma-620-operadores',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Operadores',nombre:'WHMA/IPC 620 para Operadores',horas:20,desc:'Estándar WHMA/IPC 620 aplicado a operadores de ensamble de arneses y cables.'},
+      {id:'fund-soldadura-1',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Soldadura',nombre:'Fundamentos de Soldadura I',horas:20,desc:'Introducción a técnicas de soldadura aplicadas en ensamble de componentes electrónicos.'},
+      {id:'ensamble-ingenieros',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Ingeniería',nombre:'Ensamble Electrónico para Ingenieros',horas:24,desc:'Diseño, desarrollo e implementación de ensambles electrónicos desde perspectiva de ingeniería.'},
+      {id:'inspeccion-intro',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Inspección',nombre:'Introducción a la Inspección de Ensambles Electrónicos',horas:5,desc:'Fundamentos de inspección visual e instrumental de ensambles electrónicos.'},
+      {id:'ing-mfg-intro',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Ingeniería',nombre:'Ingeniería para la Manufactura de Ensambles Electrónicos: Introducción',horas:4,desc:'Introducción a los procesos de ingeniería aplicados en la manufactura de ensambles electrónicos.'},
+      {id:'ing-mfg-stencil',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Ingeniería',nombre:'Ingeniería para la Manufactura de Ensambles Electrónicos: Impresión con Stencil',horas:5,desc:'Técnicas de impresión con stencil en la manufactura de tarjetas de circuito impreso.'},
+      {id:'ing-mfg-smt',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'SMT',nombre:'Ingeniería para la Manufactura de Ensambles Electrónicos: Tecnología SMT',horas:4,desc:'Tecnología de montaje superficial (SMT) en la manufactura de ensambles electrónicos.'},
+      {id:'ing-mfg-th',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Through-Hole',nombre:'Ingeniería para la Manufactura de Ensambles Electrónicos: Ensamble TH',horas:3,desc:'Ensamble de orificio pasante (Through-Hole) en la manufactura de ensambles electrónicos.'},
+      {id:'defectos-pcb',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Calidad',nombre:'Solución de Problemas y Análisis de Defectos en PCB',horas:16,desc:'Metodologías para identificar y resolver defectos en tarjetas de circuito impreso.'},
+      {id:'defectos-ensambles',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Calidad',nombre:'Solución de Problemas y Análisis de Defectos en Ensambles Electrónicos',horas:16,desc:'Análisis y solución de defectos en ensambles electrónicos terminados.'},
+      {id:'pcb-ingenieria-intro',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Diseño PCB',nombre:'Introducción a la Ingeniería de Diseño de PCB',horas:12,desc:'Fundamentos de ingeniería aplicados al diseño de tarjetas de circuito impreso.'},
+      {id:'pcb-mfg-intro',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Diseño PCB',nombre:'Introducción al Diseño de PCB para la Manufactura',horas:2,desc:'Consideraciones de manufactura en el diseño de PCB (Design for Manufacturing).'},
+      {id:'pcb-mfg',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Diseño PCB',nombre:'Diseño de PCB para la Manufactura',horas:12,desc:'Diseño de tarjetas de circuito impreso orientado a su manufacturabilidad y calidad.'},
+      {id:'pcb-diseno-1',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Diseño PCB',nombre:'Introducción al Diseño de PCB I',horas:24,desc:'Primer nivel de diseño de PCB: esquemáticos, layout y preparación de archivos de fabricación.'},
+      {id:'pcb-diseno-2',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'Diseño PCB',nombre:'Introducción al Diseño de PCB II',horas:32,desc:'Segundo nivel de diseño de PCB: señales de alta velocidad, integridad de señal y normas.'},
+      {id:'ansi-esd-fund',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'ESD',nombre:'Fundamentos ANSI/ESD S20.20',horas:4,desc:'Fundamentos del estándar ANSI/ESD S20.20 para control de descargas electrostáticas.'},
+      {id:'ansi-esd-auditor',cat:'manufactura',label:'Manufactura Electrónica',badge:'badge-blue',bg:'#0A1628,#0E2147',stroke:'rgba(56,189,248,0.35)',tag:'ESD',nombre:'Taller para la Formación de Auditores Internos ANSI/ESD S20.20',horas:12,desc:'Formación de auditores internos para el estándar ANSI/ESD S20.20 en control ESD.'},
+      // SEGURIDAD INDUSTRIAL
+      {id:'nom-001',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-001-STPS-2008 — Edificios, Locales e Instalaciones',horas:4,desc:'Edificios, locales, instalaciones y áreas en los centros de trabajo: condiciones de seguridad.'},
+      {id:'nom-002',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-002-STPS-2010 — Prevención y Protección contra Incendios',horas:4,desc:'Condiciones de seguridad para prevención y protección contra incendios en centros de trabajo.'},
+      {id:'nom-004',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-004-STPS-1999 — Sistemas de Protección en Maquinaria',horas:4,desc:'Sistemas de protección y dispositivos de seguridad en maquinaria y equipo de los centros de trabajo.'},
+      {id:'nom-005',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-005-STPS-2017 — Manejo de Sustancias Químicas Peligrosas',horas:4,desc:'Manejo de sustancias químicas peligrosas: condiciones y procedimientos de seguridad y salud.'},
+      {id:'nom-006',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-006-STPS-2014 — Manejo y Almacenamiento de Materiales',horas:8,desc:'Manejo y almacenamiento de materiales. Incluye uso seguro de montacargas, grúas viajeras y polipastos.'},
+      {id:'nom-009',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-009-STPS-2011 — Trabajos en Altura',horas:4,desc:'Condiciones de seguridad para realizar trabajos en altura en los centros de trabajo.'},
+      {id:'nom-010',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-010-STPS-2014 — Agentes Químicos Contaminantes',horas:4,desc:'Agentes químicos contaminantes del ambiente laboral: reconocimiento, evaluación y control.'},
+      {id:'nom-011',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-011-STPS-2001 — Ruido en Centros de Trabajo',horas:4,desc:'Condiciones de seguridad e higiene en centros de trabajo donde se genere ruido.'},
+      {id:'nom-012',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-012-STPS-2012 — Fuentes de Radiación Ionizante',horas:4,desc:'Condiciones de seguridad y salud en centros de trabajo con fuentes de radiación ionizante.'},
+      {id:'nom-017',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-017-STPS-2008 — Equipo de Protección Personal',horas:4,desc:'Equipo de protección personal: selección, uso y manejo en los centros de trabajo.'},
+      {id:'nom-018',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-018-STPS-2000 — Identificación de Peligros por Sustancias Químicas',horas:4,desc:'Sistema para la identificación y comunicación de peligros por sustancias químicas peligrosas.'},
+      {id:'nom-019',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-019-STPS-2011 — Comisiones de Seguridad e Higiene',horas:6,desc:'Constitución, integración, organización y funcionamiento de las comisiones de seguridad e higiene.'},
+      {id:'nom-020',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-020-STPS-2011 — Recipientes Sujetos a Presión',horas:4,desc:'Recipientes sujetos a presión, criogénicos y generadores de vapor o calderas: condiciones de seguridad.'},
+      {id:'nom-022',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-022-STPS-2015 — Electricidad Estática',horas:4,desc:'Electricidad estática en los centros de trabajo: condiciones de seguridad.'},
+      {id:'nom-024',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-024-STPS-2001 — Vibraciones',horas:4,desc:'Vibraciones: condiciones de seguridad e higiene en los centros de trabajo.'},
+      {id:'nom-025',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-025-STPS-2008 — Condiciones de Iluminación',horas:4,desc:'Condiciones de iluminación en los centros de trabajo.'},
+      {id:'nom-026',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-026-STPS-2008 — Colores y Señales de Seguridad',horas:4,desc:'Colores y señales de seguridad e higiene, e identificación de riesgos por fluidos en tuberías.'},
+      {id:'nom-027',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-027-STPS-2008 — Actividades de Soldadura y Corte',horas:4,desc:'Actividades de soldadura y corte: condiciones de seguridad e higiene.'},
+      {id:'nom-029',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-029-STPS-2005 — Mantenimiento de Instalaciones Eléctricas',horas:4,desc:'Mantenimiento de instalaciones eléctricas en los centros de trabajo: condiciones de seguridad.'},
+      {id:'nom-030',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-030-STPS-2009 — Servicios Preventivos de Seguridad',horas:4,desc:'Servicios preventivos de seguridad y salud en el trabajo: funciones y actividades.'},
+      {id:'nom-033',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-033-STPS-2015 — Trabajos en Espacios Confinados',horas:4,desc:'Condiciones de seguridad para realizar trabajos en espacios confinados.'},
+      {id:'nom-035',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-035-STPS-2018 — Factores de Riesgo Psicosocial',horas:6,desc:'Factores de riesgo psicosocial en el trabajo: identificación, análisis y prevención.'},
+      {id:'nom-013',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-013-STPS-1993 — Radiaciones No Ionizantes',horas:6,desc:'Condiciones de seguridad e higiene en centros de trabajo con fuentes generadoras de radiaciones electromagnéticas no ionizantes.'},
+      {id:'nom-017-2024',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-017-STPS-2024 — Equipo de Protección Personal (actualizada)',horas:6,desc:'Versión actualizada 2024: equipo de protección personal — selección, uso, mantenimiento y verificación.'},
+      {id:'nom-031',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-031-STPS-2011 — Construcción',horas:6,desc:'Condiciones de seguridad y salud en el trabajo en obras de construcción.'},
+      {id:'nom-036-ergonomia',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Norma STPS',nombre:'NOM-036-1-STPS-2018 — Ergonomía · Manejo Manual de Cargas',horas:6,desc:'Factores de riesgo ergonómico por manejo manual de cargas: identificación, análisis, prevención y control.'},
+      {id:'rcp',cat:'seguridad',label:'Seguridad Industrial',badge:'badge-green',bg:'#0A1A0A,#0E2210',stroke:'rgba(52,211,153,0.35)',tag:'Primeros Auxilios',nombre:'RCP y Primeros Auxilios',horas:8,desc:'Reanimación cardiopulmonar y primeros auxilios para personal de centros de trabajo.'},
+      // INDUSTRIA AUTOMOTRIZ
+      {id:'apqp',cat:'automotriz',label:'Industria Automotriz',badge:'badge-orange',bg:'#1A0E00,#2A1800',stroke:'rgba(251,146,60,0.35)',tag:'AIAG',nombre:'APQP — Planeación Avanzada de la Calidad del Producto',horas:10,desc:'Planeación avanzada de la calidad del producto. Herramienta fundamental del sistema IATF 16949.'},
+      {id:'ppap',cat:'automotriz',label:'Industria Automotriz',badge:'badge-orange',bg:'#1A0E00,#2A1800',stroke:'rgba(251,146,60,0.35)',tag:'AIAG',nombre:'PPAP — Proceso de Aprobación de Partes de Producción',horas:5,desc:'Proceso de aprobación de partes de producción conforme a requisitos AIAG.'},
+      {id:'fmea',cat:'automotriz',label:'Industria Automotriz',badge:'badge-orange',bg:'#1A0E00,#2A1800',stroke:'rgba(251,146,60,0.35)',tag:'AIAG',nombre:'FMEA — Análisis de Modos de Falla y Efecto',horas:30,desc:'Análisis de los modos de falla y efecto. Herramienta clave del sistema de calidad IATF 16949.'},
+      {id:'plan-control',cat:'automotriz',label:'Industria Automotriz',badge:'badge-orange',bg:'#1A0E00,#2A1800',stroke:'rgba(251,146,60,0.35)',tag:'AIAG',nombre:'Plan de Control',horas:5,desc:'Elaboración y gestión de planes de control para procesos de manufactura automotriz.'},
+      {id:'msa',cat:'automotriz',label:'Industria Automotriz',badge:'badge-orange',bg:'#1A0E00,#2A1800',stroke:'rgba(251,146,60,0.35)',tag:'AIAG',nombre:'MSA — Análisis de los Sistemas de Medición',horas:25,desc:'Análisis de sistemas de medición: R&R de medición, exactitud, precisión y linealidad.'},
+      {id:'spc',cat:'automotriz',label:'Industria Automotriz',badge:'badge-orange',bg:'#1A0E00,#2A1800',stroke:'rgba(251,146,60,0.35)',tag:'AIAG',nombre:'SPC — Control Estadístico de Procesos',horas:25,desc:'Control estadístico de procesos para monitoreo y mejora de la calidad en manufactura automotriz.'},
+      {id:'iatf-req',cat:'automotriz',label:'Industria Automotriz',badge:'badge-orange',bg:'#1A0E00,#2A1800',stroke:'rgba(251,146,60,0.35)',tag:'IATF',nombre:'Requerimientos IATF 16949:2016',horas:15,desc:'Requisitos del estándar IATF 16949:2016 para sistemas de gestión de calidad automotriz.'},
+      {id:'iatf-auditor',cat:'automotriz',label:'Industria Automotriz',badge:'badge-orange',bg:'#1A0E00,#2A1800',stroke:'rgba(251,146,60,0.35)',tag:'IATF',nombre:'Auditor Interno IATF 16949:2016',horas:30,desc:'Formación completa para auditar sistemas de gestión de calidad en la industria automotriz.'},
+      {id:'iatf-lider',cat:'automotriz',label:'Industria Automotriz',badge:'badge-orange',bg:'#1A0E00,#2A1800',stroke:'rgba(251,146,60,0.35)',tag:'IATF',nombre:'Auditor Líder IATF 16949',horas:24,desc:'Formación de auditores líderes para sistemas de gestión de calidad automotriz IATF 16949.'},
+      // CALIDAD Y MEJORA CONTINUA
+      {id:'tpm',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Mejora Continua',nombre:'TPM — Mantenimiento Productivo Total',horas:30,desc:'Mantenimiento productivo total para maximizar la efectividad del equipo y eliminar pérdidas.'},
+      {id:'tps',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Lean',nombre:'TPS — Sistema de Producción Toyota',horas:15,desc:'Sistema de producción Toyota: filosofía, principios y herramientas Lean.'},
+      {id:'solucion-problemas',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Mejora Continua',nombre:'Solución de Problemas',horas:8,desc:'Metodologías estructuradas para la identificación, análisis y resolución de problemas industriales.'},
+      {id:'kaizen',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Kaizen',nombre:'Despliegue Kaizen',horas:30,desc:'Metodología Kaizen para la mejora continua incremental de procesos y eliminación de desperdicios.'},
+      {id:'lss-white',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Lean Six Sigma',nombre:'Lean Six Sigma — Nivel White Belt',horas:4,desc:'Introducción a Lean Six Sigma: conceptos básicos y roles en proyectos de mejora.'},
+      {id:'lss-yellow',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Lean Six Sigma',nombre:'Lean Six Sigma — Nivel Yellow Belt',horas:20,desc:'Lean Six Sigma Yellow Belt: herramientas básicas y participación activa en proyectos DMAIC.'},
+      {id:'lss-green',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Lean Six Sigma',nombre:'Lean Six Sigma — Nivel Green Belt',horas:45,desc:'Lean Six Sigma Green Belt: liderazgo de proyectos DMAIC con herramientas estadísticas.'},
+      {id:'lss-black',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Lean Six Sigma',nombre:'Lean Six Sigma — Nivel Black Belt',horas:80,desc:'Lean Six Sigma Black Belt: dominio avanzado de metodología DMAIC y liderazgo estratégico.'},
+      {id:'doe',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Estadística',nombre:'DOE — Diseño de Experimentos',horas:20,desc:'Diseño y análisis de experimentos para optimización de procesos industriales.'},
+      {id:'minitab',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Estadística',nombre:'Minitab',horas:20,desc:'Análisis estadístico industrial con Minitab: gráficos, pruebas de hipótesis y análisis de capacidad.'},
+      {id:'minitab-avanzado',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Estadística',nombre:'Minitab Avanzado',horas:null,desc:'Análisis estadístico avanzado con Minitab: regresión, DOE y análisis multivariado.'},
+      {id:'excel-basico',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Excel',nombre:'Excel — Nivel Básico',horas:10,desc:'Fundamentos de Excel para el manejo de datos y elaboración de reportes básicos.'},
+      {id:'excel-intermedio',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Excel',nombre:'Excel — Nivel Intermedio',horas:15,desc:'Excel intermedio: fórmulas avanzadas, tablas dinámicas y gráficos para análisis de datos.'},
+      {id:'excel-avanzado',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'Excel',nombre:'Excel — Nivel Avanzado',horas:25,desc:'Excel avanzado: macros, Power Query y análisis estadístico para ingeniería industrial.'},
+      {id:'iso9001-req-lean',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'ISO',nombre:'Requerimientos ISO 9001',horas:15,desc:'Requisitos de la norma ISO 9001 aplicados a sistemas de gestión de calidad.'},
+      {id:'iso9001-auditor-lean',cat:'lean',label:'Calidad y Mejora Continua',badge:'badge-purple',bg:'#0A001A,#16002A',stroke:'rgba(167,139,250,0.35)',tag:'ISO',nombre:'Auditor Interno ISO 9001',horas:30,desc:'Formación de auditores internos para sistemas de gestión de calidad ISO 9001.'},
+      // FORMACIÓN EN ISO
+      {id:'iso9001-fund',cat:'iso',label:'Formación ISO',badge:'badge-teal',bg:'#001A1A,#002828',stroke:'rgba(45,212,191,0.35)',tag:'ISO 9001',nombre:'Fundamentos de Gestión de la Calidad con ISO 9001:2015',horas:12,desc:'Fundamentos y principios del sistema de gestión de la calidad basado en ISO 9001:2015.'},
+      {id:'iso9001-auditor',cat:'iso',label:'Formación ISO',badge:'badge-teal',bg:'#001A1A,#002828',stroke:'rgba(45,212,191,0.35)',tag:'ISO 9001',nombre:'Formación de Auditor Interno ISO 9001:2015 en Gestión de Calidad',horas:24,desc:'Formación completa para auditar sistemas de gestión de calidad bajo la norma ISO 9001:2015.'},
+      {id:'iso14001-fund',cat:'iso',label:'Formación ISO',badge:'badge-teal',bg:'#001A1A,#002828',stroke:'rgba(45,212,191,0.35)',tag:'ISO 14001',nombre:'Fundamentos de Gestión Ambiental con ISO 14001:2015',horas:12,desc:'Fundamentos del sistema de gestión ambiental basado en la norma ISO 14001:2015.'},
+      {id:'iso14001-auditor',cat:'iso',label:'Formación ISO',badge:'badge-teal',bg:'#001A1A,#002828',stroke:'rgba(45,212,191,0.35)',tag:'ISO 14001',nombre:'Formación de Auditor Interno ISO 14001:2015 en Gestión Ambiental',horas:24,desc:'Formación de auditores internos para sistemas de gestión ambiental ISO 14001:2015.'},
+      {id:'iso27001-fund',cat:'iso',label:'Formación ISO',badge:'badge-teal',bg:'#001A1A,#002828',stroke:'rgba(45,212,191,0.35)',tag:'ISO 27001',nombre:'Fundamentos de Seguridad de la Información con ISO 27001:2022',horas:12,desc:'Fundamentos del sistema de gestión de seguridad de la información basado en ISO 27001:2022.'},
+      {id:'iso27001-auditor',cat:'iso',label:'Formación ISO',badge:'badge-teal',bg:'#001A1A,#002828',stroke:'rgba(45,212,191,0.35)',tag:'ISO 27001',nombre:'Formación de Auditor Interno ISO 27001:2022 en Seguridad de la Información',horas:24,desc:'Formación de auditores internos para sistemas de gestión de seguridad de la información ISO 27001.'},
+      {id:'iso45001-fund',cat:'iso',label:'Formación ISO',badge:'badge-teal',bg:'#001A1A,#002828',stroke:'rgba(45,212,191,0.35)',tag:'ISO 45001',nombre:'Fundamentos de Seguridad y Salud en el Trabajo con ISO 45001:2018',horas:12,desc:'Fundamentos del sistema de gestión de seguridad y salud en el trabajo basado en ISO 45001:2018.'},
+      {id:'iso45001-auditor',cat:'iso',label:'Formación ISO',badge:'badge-teal',bg:'#001A1A,#002828',stroke:'rgba(45,212,191,0.35)',tag:'ISO 45001',nombre:'Formación de Auditor Interno ISO 45001:2018 en Seguridad y Salud',horas:24,desc:'Formación de auditores internos para sistemas de gestión de seguridad y salud ISO 45001:2018.'},
+      {id:'iso-integral',cat:'iso',label:'Formación ISO',badge:'badge-teal',bg:'#001A1A,#002828',stroke:'rgba(45,212,191,0.35)',tag:'ISO Integral',nombre:'Sistemas de Gestión Integral ISO',horas:24,desc:'Integración de sistemas de gestión ISO 9001, 14001, 45001 y 27001 en un sistema único.'},
+      // SOLDADURA INDUSTRIAL
+      {id:'fund-soldadura',cat:'soldadura',label:'Soldadura Industrial',badge:'badge-red',bg:'#1A0808,#2A1010',stroke:'rgba(239,68,68,0.35)',tag:'Fundamentos',nombre:'Fundamentos de Soldadura',horas:16,desc:'Principios básicos de soldadura industrial: equipos, materiales y técnicas fundamentales.'},
+      {id:'smaw',cat:'soldadura',label:'Soldadura Industrial',badge:'badge-red',bg:'#1A0808,#2A1010',stroke:'rgba(239,68,68,0.35)',tag:'SMAW',nombre:'Soldadura por Arco Eléctrico con Electrodo Revestido (SMAW)',horas:24,desc:'Técnica de soldadura SMAW: selección de electrodos, parámetros y posiciones de soldadura.'},
+      {id:'gmaw',cat:'soldadura',label:'Soldadura Industrial',badge:'badge-red',bg:'#1A0808,#2A1010',stroke:'rgba(239,68,68,0.35)',tag:'MIG/MAG',nombre:'Soldadura MIG/MAG (GMAW)',horas:32,desc:'Soldadura por arco con gas protector MIG/MAG: parámetros, transferencia de metal y aplicaciones.'},
+      {id:'gtaw',cat:'soldadura',label:'Soldadura Industrial',badge:'badge-red',bg:'#1A0808,#2A1010',stroke:'rgba(239,68,68,0.35)',tag:'TIG',nombre:'Soldadura TIG (GTAW) en Componentes Estructurales',horas:32,desc:'Soldadura TIG en componentes estructurales: control de arco, materiales de aporte y calidad.'},
+      {id:'spot-welding',cat:'soldadura',label:'Soldadura Industrial',badge:'badge-red',bg:'#1A0808,#2A1010',stroke:'rgba(239,68,68,0.35)',tag:'Resistencia',nombre:'Soldadura por Resistencia (Spot Welding) en Ensamble',horas:16,desc:'Soldadura por resistencia para ensambles industriales: parámetros, electrodos y control de calidad.'},
+      {id:'fcaw',cat:'soldadura',label:'Soldadura Industrial',badge:'badge-red',bg:'#1A0808,#2A1010',stroke:'rgba(239,68,68,0.35)',tag:'FCAW',nombre:'Soldadura con Alambre Tubular (FCAW) para Estructuras de Alta Resistencia',horas:24,desc:'Soldadura FCAW para estructuras de alta resistencia: consumibles, parámetros y posiciones.'},
+      {id:'planos-soldadura',cat:'soldadura',label:'Soldadura Industrial',badge:'badge-red',bg:'#1A0808,#2A1010',stroke:'rgba(239,68,68,0.35)',tag:'Interpretación',nombre:'Interpretación de Planos y Simbología de Soldadura',horas:16,desc:'Lectura de planos de ingeniería y simbología de soldadura conforme a estándares AWS.'},
+      {id:'metalurgia-soldadura',cat:'soldadura',label:'Soldadura Industrial',badge:'badge-red',bg:'#1A0808,#2A1010',stroke:'rgba(239,68,68,0.35)',tag:'Metalurgia',nombre:'Metalurgia y Tratamientos Térmicos en Soldadura',horas:16,desc:'Metalurgia de la soldadura, microestructuras, tratamientos térmicos pre y post soldadura.'},
+      {id:'inspeccion-soldadura',cat:'soldadura',label:'Soldadura Industrial',badge:'badge-red',bg:'#1A0808,#2A1010',stroke:'rgba(239,68,68,0.35)',tag:'Inspección',nombre:'Inspección y Pruebas de Calidad en Soldadura',horas:24,desc:'Métodos de inspección y ensayos no destructivos para control de calidad en soldadura.'},
+      {id:'robotica-soldadura',cat:'soldadura',label:'Soldadura Industrial',badge:'badge-red',bg:'#1A0808,#2A1010',stroke:'rgba(239,68,68,0.35)',tag:'Automatización',nombre:'Automatización y Robótica en Soldadura',horas:32,desc:'Soldadura robotizada: programación, configuración de celdas y control de calidad automatizado.'},
+      // AUTOMATIZACIÓN
+      {id:'fund-automatizacion',cat:'automatizacion',label:'Automatización',badge:'badge-blue',bg:'#0A0A1A,#10102A',stroke:'rgba(56,189,248,0.35)',tag:'Fundamentos',nombre:'Fundamentos de Automatización y Control Industrial',horas:16,desc:'Principios de automatización industrial: sensores, actuadores, señales y sistemas de control.'},
+      {id:'plc',cat:'automatizacion',label:'Automatización',badge:'badge-blue',bg:'#0A0A1A,#10102A',stroke:'rgba(56,189,248,0.35)',tag:'PLC',nombre:'Programación de PLCs (Controladores Lógicos Programables)',horas:32,desc:'Programación Ladder, FBD y configuración de entradas/salidas en PLCs industriales.'},
+      {id:'scada-hmi',cat:'automatizacion',label:'Automatización',badge:'badge-blue',bg:'#0A0A1A,#10102A',stroke:'rgba(56,189,248,0.35)',tag:'SCADA',nombre:'Sistemas SCADA y HMI para Monitoreo y Control de Procesos',horas:24,desc:'Diseño e implementación de sistemas SCADA y HMI para supervisión de procesos industriales.'},
+      {id:'robots-industriales',cat:'automatizacion',label:'Automatización',badge:'badge-blue',bg:'#0A0A1A,#10102A',stroke:'rgba(56,189,248,0.35)',tag:'Robótica',nombre:'Automatización con Robots Industriales y Celdas Robotizadas',horas:32,desc:'Programación y configuración de robots industriales y celdas robotizadas de manufactura.'},
+      {id:'instrumentacion',cat:'automatizacion',label:'Automatización',badge:'badge-blue',bg:'#0A0A1A,#10102A',stroke:'rgba(56,189,248,0.35)',tag:'Instrumentación',nombre:'Instrumentación y Sensores en Automatización',horas:24,desc:'Instrumentación industrial: sensores, transductores, calibración y sistemas de medición.'},
+      {id:'redes-industriales',cat:'automatizacion',label:'Automatización',badge:'badge-blue',bg:'#0A0A1A,#10102A',stroke:'rgba(56,189,248,0.35)',tag:'Redes',nombre:'Redes Industriales y Comunicación en Sistemas Automatizados',horas:24,desc:'Protocolos de comunicación industrial: Profibus, Profinet, Modbus y redes Ethernet industrial.'},
+      {id:'control-movimiento',cat:'automatizacion',label:'Automatización',badge:'badge-blue',bg:'#0A0A1A,#10102A',stroke:'rgba(56,189,248,0.35)',tag:'Drives',nombre:'Control de Movimiento y Servoaccionamientos',horas:24,desc:'Control de motores, variadores de frecuencia y sistemas de servoaccionamiento industrial.'},
+      {id:'inspeccion-automatizada',cat:'automatizacion',label:'Automatización',badge:'badge-blue',bg:'#0A0A1A,#10102A',stroke:'rgba(56,189,248,0.35)',tag:'Inspección',nombre:'Sistemas de Inspección Automatizada',horas:24,desc:'Visión artificial y sistemas automáticos de inspección de calidad en líneas de producción.'},
+      {id:'mantenimiento-predictivo',cat:'automatizacion',label:'Automatización',badge:'badge-blue',bg:'#0A0A1A,#10102A',stroke:'rgba(56,189,248,0.35)',tag:'Mantenimiento',nombre:'Mantenimiento Predictivo y Diagnóstico de Fallas en Sistemas',horas:24,desc:'Técnicas de mantenimiento predictivo y diagnóstico de fallas en sistemas automatizados.'},
+      {id:'industria40',cat:'automatizacion',label:'Automatización',badge:'badge-blue',bg:'#0A0A1A,#10102A',stroke:'rgba(56,189,248,0.35)',tag:'Industria 4.0',nombre:'Industria 4.0 e Integración de Tecnologías Avanzadas en Manufactura',horas:24,desc:'Industria 4.0: IoT industrial, big data, gemelos digitales y manufactura inteligente.'},
+      // DISEÑO MECÁNICO Y CAD
+      {id:'interpretacion-planos',cat:'diseno',label:'Diseño Mecánico y CAD',badge:'badge-green',bg:'#0A1A10,#102510',stroke:'rgba(52,211,153,0.35)',tag:'Planos',nombre:'Interpretación de Planos',horas:10,desc:'Lectura e interpretación de planos mecánicos e industriales con simbología técnica estándar.'},
+      {id:'gdt',cat:'diseno',label:'Diseño Mecánico y CAD',badge:'badge-green',bg:'#0A1A10,#102510',stroke:'rgba(52,211,153,0.35)',tag:'GD&T',nombre:'GD&T — Tolerancias y Dimensiones Geométricas',horas:10,desc:'Tolerancias y dimensiones geométricas (GD&T) conforme a ASME Y14.5 para ingeniería de manufactura.'},
+      {id:'solidworks-basico',cat:'diseno',label:'Diseño Mecánico y CAD',badge:'badge-green',bg:'#0A1A10,#102510',stroke:'rgba(52,211,153,0.35)',tag:'SolidWorks',nombre:'SolidWorks — Nivel Básico',horas:15,desc:'Modelado 3D de piezas y ensambles básicos en SolidWorks para diseño mecánico.'},
+      {id:'solidworks-intermedio',cat:'diseno',label:'Diseño Mecánico y CAD',badge:'badge-green',bg:'#0A1A10,#102510',stroke:'rgba(52,211,153,0.35)',tag:'SolidWorks',nombre:'SolidWorks — Nivel Intermedio',horas:20,desc:'SolidWorks intermedio: ensambles complejos, simulación y generación de planos de fabricación.'},
+      {id:'solidworks-avanzado',cat:'diseno',label:'Diseño Mecánico y CAD',badge:'badge-green',bg:'#0A1A10,#102510',stroke:'rgba(52,211,153,0.35)',tag:'SolidWorks',nombre:'SolidWorks — Nivel Avanzado',horas:20,desc:'SolidWorks avanzado: superficies complejas, análisis FEA y automatización con macros.'},
+      {id:'autocad-basico',cat:'diseno',label:'Diseño Mecánico y CAD',badge:'badge-green',bg:'#0A1A10,#102510',stroke:'rgba(52,211,153,0.35)',tag:'AutoCAD',nombre:'AutoCAD — Nivel Básico',horas:15,desc:'Fundamentos de AutoCAD: dibujo 2D, comandos básicos y elaboración de planos técnicos.'},
+      {id:'autocad-intermedio',cat:'diseno',label:'Diseño Mecánico y CAD',badge:'badge-green',bg:'#0A1A10,#102510',stroke:'rgba(52,211,153,0.35)',tag:'AutoCAD',nombre:'AutoCAD — Nivel Intermedio',horas:20,desc:'AutoCAD intermedio: planos de manufactura, tolerancias, bloques y gestión de capas.'},
+      {id:'autocad-avanzado',cat:'diseno',label:'Diseño Mecánico y CAD',badge:'badge-green',bg:'#0A1A10,#102510',stroke:'rgba(52,211,153,0.35)',tag:'AutoCAD',nombre:'AutoCAD — Nivel Avanzado',horas:20,desc:'AutoCAD avanzado: 3D, renderizado y preparación de documentación técnica industrial.'},
+      // HABILIDADES GERENCIALES
+      {id:'liderazgo',cat:'gerencial',label:'Habilidades Gerenciales',badge:'badge-yellow',bg:'#1A0A10,#250A18',stroke:'rgba(251,191,36,0.35)',tag:'Gerencial',nombre:'Liderazgo y Gestión de Equipos de Alto Rendimiento',horas:12,desc:'Liderazgo de equipos de alto rendimiento, comunicación efectiva y gestión del desempeño.'},
+      {id:'trabajo-equipo',cat:'gerencial',label:'Habilidades Gerenciales',badge:'badge-yellow',bg:'#1A0A10,#250A18',stroke:'rgba(251,191,36,0.35)',tag:'Gerencial',nombre:'Trabajo en Equipo',horas:10,desc:'Dinámicas y metodologías para fortalecer la colaboración y sinergia en equipos de trabajo.'},
+      {id:'conflictos',cat:'gerencial',label:'Habilidades Gerenciales',badge:'badge-yellow',bg:'#1A0A10,#250A18',stroke:'rgba(251,191,36,0.35)',tag:'Gerencial',nombre:'Resolución de Conflictos',horas:12,desc:'Estrategias y herramientas para la gestión y resolución efectiva de conflictos en el entorno laboral.'},
+      {id:'inteligencia-emocional',cat:'gerencial',label:'Habilidades Gerenciales',badge:'badge-yellow',bg:'#1A0A10,#250A18',stroke:'rgba(251,191,36,0.35)',tag:'Gerencial',nombre:'Inteligencia Emocional',horas:10,desc:'Desarrollo de la inteligencia emocional para mejorar las relaciones laborales y el liderazgo.'},
+      {id:'gestion-estres',cat:'gerencial',label:'Habilidades Gerenciales',badge:'badge-yellow',bg:'#1A0A10,#250A18',stroke:'rgba(251,191,36,0.35)',tag:'Gerencial',nombre:'Gestión del Estrés y Bienestar Laboral',horas:8,desc:'Técnicas para el manejo del estrés, resiliencia y promoción del bienestar en el trabajo.'},
+      {id:'creatividad',cat:'gerencial',label:'Habilidades Gerenciales',badge:'badge-yellow',bg:'#1A0A10,#250A18',stroke:'rgba(251,191,36,0.35)',tag:'Gerencial',nombre:'Creatividad y Pensamiento Innovador',horas:8,desc:'Técnicas de creatividad e innovación para generar soluciones originales en el entorno empresarial.'},
+      {id:'comunicacion-efectiva',cat:'gerencial',label:'Habilidades Gerenciales',badge:'badge-yellow',bg:'#1A0A10,#250A18',stroke:'rgba(251,191,36,0.35)',tag:'Gerencial',nombre:'Comunicación Efectiva',horas:8,desc:'Habilidades de comunicación asertiva, escucha activa y expresión clara en ambientes laborales.'},
+      {id:'gestion-tiempo',cat:'gerencial',label:'Habilidades Gerenciales',badge:'badge-yellow',bg:'#1A0A10,#250A18',stroke:'rgba(251,191,36,0.35)',tag:'Gerencial',nombre:'Gestión del Tiempo y Organización Personal',horas:8,desc:'Técnicas de administración del tiempo, priorización y productividad personal.'},
+      {id:'negociacion',cat:'gerencial',label:'Habilidades Gerenciales',badge:'badge-yellow',bg:'#1A0A10,#250A18',stroke:'rgba(251,191,36,0.35)',tag:'Gerencial',nombre:'Habilidades de Negociación y Persuasión',horas:10,desc:'Técnicas de negociación efectiva, persuasión y manejo de acuerdos en contextos empresariales.'},
+    ];
+
+    const INSTRUCTORS = {
+      manufactura:    { name: 'Fabián Torres',  photo: 'Fabian.jpeg' },
+      seguridad:      { name: 'Adrián Nájera',  photo: 'Adrian.jpeg' },
+      automotriz:     { name: 'César Fierro',   photo: 'Cesar.jpeg'  },
+      lean:           { name: 'César Fierro',   photo: 'Cesar.jpeg'  },
+      iso:            { name: 'Adrián Nájera',  photo: 'Adrian.jpeg' },
+      soldadura:      { name: 'Fabián Torres',  photo: 'Fabian.jpeg' },
+      automatizacion: { name: 'Fabián Torres',  photo: 'Fabian.jpeg' },
+      diseno:         { name: 'Fabián Torres',  photo: 'Fabian.jpeg' },
+      gerencial:      { name: 'César Fierro',   photo: 'Cesar.jpeg'  },
+    };
+
+    const SVGS = {
+      manufactura:    '<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
+      seguridad:      '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+      automotriz:     '<circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07M4.93 4.93a10 10 0 0 0 0 14.14M8.46 8.46a5 5 0 0 0 0 7.07"/>',
+      lean:           '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+      iso:            '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+      soldadura:      '<path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/><path d="M8 12l3 3 5-5"/>',
+      automatizacion: '<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+      diseno:         '<polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/><line x1="12" y1="2" x2="12" y2="22"/><path d="M2 8.5l10 6.5 10-6.5"/>',
+      gerencial:      '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    };
+
+    // Render course cards before CTA
+    (function renderCourses() {
+      const grid = document.getElementById('courseGrid');
+      const cta  = document.getElementById('ctaCard');
+      COURSES.forEach(function(c) {
+        const parts = c.bg.split(',');
+        const bg1 = parts[0], bg2 = parts[1];
+        const horasStr = c.horas ? c.horas + ' hrs \u00b7 Presencial \u00b7 DC-3' : 'Consultar duración';
+        const nombre_enc = encodeURIComponent(c.nombre);
+        const el = document.createElement('a');
+        el.href = 'curso.html?id=' + c.id + '&area=' + c.cat + '&nombre=' + nombre_enc + '&horas=' + (c.horas || 0);
+        el.className = 'course-card glass glass-hover';
+        el.style.textDecoration = 'none';
+        el.dataset.cat = c.cat;
+        const svgPath = SVGS[c.cat] || SVGS.manufactura;
+        const instr = INSTRUCTORS[c.cat] || { name: 'ANGROUP', photo: '' };
+        el.innerHTML =
+          '<div class="relative" style="height:180px;background:linear-gradient(135deg,' + bg1 + ',' + bg2 + ');">' +
+            '<div class="absolute inset-0 flex items-center justify-center">' +
+              '<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="' + c.stroke + '" stroke-width="1">' + svgPath + '</svg>' +
+            '</div>' +
+            '<div class="card-img-overlay absolute inset-0"></div>' +
+            '<div class="absolute top-3 left-3 badge ' + c.badge + '">' + c.label + '</div>' +
+            '<div class="absolute top-3 right-3 badge badge-green"><span style="width:5px;height:5px;background:var(--green);border-radius:50%;display:inline-block;margin-right:4px;"></span>Presencial</div>' +
+          '</div>' +
+          '<div class="p-5">' +
+            '<h3 class="font-bold text-lg mb-2">' + c.nombre + '</h3>' +
+            '<p class="text-sm text-slate-400 mb-3 leading-relaxed">' + c.desc + '</p>' +
+            '<div class="flex items-center justify-between pt-3" style="border-top:1px solid var(--border);">' +
+              '<div class="text-xs text-slate-500">' + horasStr + '</div>' +
+              '<span class="badge ' + c.badge + '">' + c.tag + '</span>' +
+            '</div>' +
+          '</div>';
+        grid.insertBefore(el, cta);
+      });
+    })();
+
+    // ── Category filter ──
+    const tabs = document.querySelectorAll('.cat-btn');
+    const cards = document.querySelectorAll('#courseGrid a[data-cat]');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const cat = tab.dataset.cat;
+        cards.forEach(card => {
+          const cats = card.dataset.cat || '';
+          card.style.display = (cat === 'todos' || cats.includes(cat)) ? 'block' : 'none';
+        });
+      });
+    });
+
+    // ── Chat ──
+    let chatOpen = false;
+    function toggleChat() {
+      chatOpen = !chatOpen;
+      document.getElementById('chatWindow').classList.toggle('open', chatOpen);
+      document.getElementById('chatIcon').style.display = chatOpen ? 'none' : 'block';
+      document.getElementById('closeIcon').style.display = chatOpen ? 'block' : 'none';
+      document.getElementById('chatNotif').style.display = 'none';
+    }
+    function openChat() { if (!chatOpen) toggleChat(); }
+
+    const botResponses = {
+      'areas': 'Nuestras áreas de capacitación presencial:\n\n• Manufactura Electrónica (IPC-A-610, J-STD-001...)\n• Seguridad Industrial (NOMs STPS)\n• Industria Automotriz (FMEA, IATF, APQP...)\n• Lean Six Sigma (White/Yellow/Green/Black Belt)\n• Formación ISO (9001, 14001, 45001, 27001)\n• Soldadura Industrial (SMAW, MIG/MAG, TIG)\n• Automatización (PLCs, SCADA, Robótica)\n• Diseño CAD (SolidWorks, AutoCAD)\n• Habilidades Gerenciales\n\n¿Qué área te interesa?',
+      'agendar': 'Para agendar un curso presencial necesitamos:\n\n1. ¿Qué curso o área te interesa?\n2. Número aproximado de participantes\n3. Ubicación de tu empresa\n4. Fechas disponibles (incluyendo turno)\n\nPuedes contactar directamente a:\n📞 +52 656 372 7555\n📧 vinculacion@angroup.mx\n\nO selecciona un curso del catálogo y presiona "Agendar".',
+      'dc3': 'La constancia DC-3 (Constancia de Habilidades Laborales) es el documento oficial que acredita la capacitación de tus trabajadores ante la STPS.\n\nTodos nuestros cursos incluyen:\n✓ Constancia DC-3\n✓ Certificado de finalización\n✓ Carpeta de evidencias para auditorías\n✓ Manual del curso en físico\n\nNuestros instructores tienen registro DC-5 vigente ante la STPS.',
+      'asesor': '¡Con gusto te comunico con un asesor!\n\n📞 +52 656 372 7555\n📧 vinculacion@angroup.mx\n📧 vinculacion@angroup.mx\n📍 Av. Vicente Guerrero 8830, Of. 202\n    Col. Hipódromo, C.P. 32400\n    Ciudad Juárez, Chihuahua\n\n🌐 www.angroup.mx',
+      'default': 'Entendido. Para darte información precisa, te recomiendo contactar directamente con nuestro equipo:\n\n📞 +52 656 372 7555\n📧 vinculacion@angroup.mx\n\nO escribe "asesor humano" para ver los datos de contacto completos.'
+    };
+
+    function getBotResponse(msg) {
+      const lower = msg.toLowerCase();
+      if (lower.includes('área') || lower.includes('area') || lower.includes('curso') || lower.includes('catálogo') || lower.includes('disponible')) return botResponses['areas'];
+      if (lower.includes('agenda') || lower.includes('presencial') || lower.includes('fecha') || lower.includes('agendar') || lower.includes('cotiz')) return botResponses['agendar'];
+      if (lower.includes('dc-3') || lower.includes('dc3') || lower.includes('constancia') || lower.includes('stps') || lower.includes('certificado')) return botResponses['dc3'];
+      if (lower.includes('asesor') || lower.includes('humano') || lower.includes('persona') || lower.includes('hablar') || lower.includes('contacto') || lower.includes('teléfono')) return botResponses['asesor'];
+      return botResponses['default'];
+    }
+
+    function addMessage(text, isUser) {
+      const msgs = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'msg ' + (isUser ? 'msg-user' : 'msg-bot');
+      div.innerHTML = text.replace(/\n/g, '<br/>');
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      addMessage(text, true);
+      input.value = '';
+      document.getElementById('quickOptions').style.display = 'none';
+      setTimeout(() => addMessage(getBotResponse(text), false), 600);
+    }
+
+    function sendQuick(text) {
+      addMessage(text, true);
+      document.getElementById('quickOptions').style.display = 'none';
+      setTimeout(() => addMessage(getBotResponse(text), false), 600);
+    }
+
+    function openEvento() {
+      window.open('evento.html', '_blank');
+    }
+    function openInstructors() {
+      document.getElementById('instructorsModal').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeInstructors() {
+      document.getElementById('instructorsModal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  </script>
+
+  <!-- MODAL INSTRUCTORES -->
+  <div id="instructorsModal" style="display:none;position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);overflow-y:auto;" onclick="if(event.target===this)closeInstructors()">
+    <div class="max-w-4xl mx-auto px-5 py-16">
+      <div class="glass rounded-3xl p-8" style="border-color:var(--border-glow);">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <p class="text-sm text-blue-400 font-semibold mb-1" style="font-family:'Space Grotesk',sans-serif;">REGISTRO STPS DC-5</p>
+            <h2 class="text-3xl font-bold">Instructores certificados STPS</h2>
+          </div>
+          <button onclick="closeInstructors()" style="width:40px;height:40px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="glass rounded-2xl p-6">
+            <div style="width:80px;height:80px;border-radius:50%;overflow:hidden;border:2px solid rgba(56,189,248,0.25);margin-bottom:16px;">
+              <img src="Fabian.jpeg" alt="Fabián Torres" style="width:100%;height:100%;object-fit:cover;object-position:top;">
+            </div>
+            <h3 class="font-bold text-lg mb-1" style="font-family:'Space Grotesk',sans-serif;">Fabián Torres</h3>
+            <p class="text-xs text-blue-400 mb-3">Manufactura · Soldadura · Automatización · Diseño</p>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Instructor certificado STPS con amplia experiencia en manufactura electrónica, soldadura industrial y automatización. Agente capacitador externo con registro DC-5, especialista en normas IPC y técnicas de soldadura AWS.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="badge badge-blue">Manufactura Electrónica</span>
+              <span class="badge badge-red">Soldadura Industrial</span>
+              <span class="badge badge-blue">Automatización</span>
+            </div>
+          </div>
+          <div class="glass rounded-2xl p-6">
+            <div style="width:80px;height:80px;border-radius:50%;overflow:hidden;border:2px solid rgba(167,139,250,0.25);margin-bottom:16px;">
+              <img src="Adrian.jpeg" alt="Adrián Nájera" style="width:100%;height:100%;object-fit:cover;object-position:top;">
+            </div>
+            <h3 class="font-bold text-lg mb-1" style="font-family:'Space Grotesk',sans-serif;">Adrián Nájera</h3>
+            <p class="text-xs text-purple-400 mb-3">Seguridad Industrial · Sistemas de Gestión ISO</p>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Instructor certificado STPS especialista en normativas de seguridad industrial y sistemas de gestión ISO. Agente capacitador externo con registro DC-5, con experiencia en auditorías internas y cumplimiento normativo.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="badge badge-orange">Seguridad Industrial</span>
+              <span class="badge badge-teal">Formación ISO</span>
+            </div>
+          </div>
+          <div class="glass rounded-2xl p-6">
+            <div style="width:80px;height:80px;border-radius:50%;overflow:hidden;border:2px solid rgba(52,211,153,0.25);margin-bottom:16px;">
+              <img src="Cesar.jpeg" alt="César Fierro" style="width:100%;height:100%;object-fit:cover;object-position:top;">
+            </div>
+            <h3 class="font-bold text-lg mb-1" style="font-family:'Space Grotesk',sans-serif;">César Fierro</h3>
+            <p class="text-xs text-green-400 mb-3">Automotriz · Lean Six Sigma · Habilidades Gerenciales</p>
+            <p class="text-sm text-slate-400 leading-relaxed mb-4">Director de ANGROUP e instructor certificado STPS. Especialista en calidad automotriz IATF 16949, Lean Six Sigma y desarrollo de habilidades gerenciales. Agente capacitador externo con registro DC-5 y miembro AIAG.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="badge badge-purple">Industria Automotriz</span>
+              <span class="badge badge-purple">Lean Six Sigma</span>
+              <span class="badge badge-yellow">Habilidades Gerenciales</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

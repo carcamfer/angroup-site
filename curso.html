@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Curso Presencial — ANGROUP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #05071A;
+      --bg2: #080C24;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.08);
+      --border-glow: rgba(56,189,248,0.25);
+      --blue: #38BDF8;
+      --purple: #A78BFA;
+      --green: #34D399;
+      --text: #E2E8F0;
+      --muted: #94A3B8;
+      --heading: #F1F5F9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+    h1,h2,h3,h4,h5 { font-family: 'Space Grotesk', sans-serif; color: var(--heading); }
+
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(56,189,248,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .bg-orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+    .orb-1 { width: 500px; height: 500px; top: -100px; right: -100px; background: rgba(56,189,248,0.06); }
+    .orb-2 { width: 400px; height: 400px; bottom: 200px; left: -100px; background: rgba(167,139,250,0.06); }
+
+    .glass {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .navbar {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 40px); max-width: 1200px;
+      z-index: 100; border-radius: 16px;
+      background: rgba(5,7,26,0.85);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+    }
+
+    .grad-text {
+      background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .glow-blue { color: var(--blue); text-shadow: 0 0 20px rgba(56,189,248,0.4); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0EA5E9, #7C3AED); color: #fff;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 600; border-radius: 12px;
+      transition: all 0.2s ease; cursor: pointer; border: none; position: relative; overflow: hidden;
+    }
+    .btn-primary::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #38BDF8, #A78BFA); opacity: 0; transition: opacity 0.2s; }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary span { position: relative; z-index: 1; }
+    .btn-secondary {
+      background: transparent; border: 1px solid var(--border-glow); color: var(--blue);
+      font-family: 'Space Grotesk', sans-serif; font-weight: 600; border-radius: 12px; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-secondary:hover { background: rgba(56,189,248,0.08); border-color: var(--blue); }
+
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; font-family: 'Space Grotesk', sans-serif; }
+    .badge-blue { background: rgba(56,189,248,0.12); color: var(--blue); border: 1px solid rgba(56,189,248,0.2); }
+    .badge-green { background: rgba(52,211,153,0.12); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+    .badge-purple { background: rgba(167,139,250,0.12); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+
+    /* ── Tabs ── */
+    .tab-btn {
+      padding: 10px 20px; border-radius: 10px; font-size: 14px;
+      font-family: 'Space Grotesk', sans-serif; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; border: 1px solid transparent;
+    }
+    .tab-btn.active { background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.3); color: var(--blue); }
+    .tab-btn:not(.active) { color: var(--muted); }
+    .tab-btn:not(.active):hover { color: var(--text); background: var(--surface); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Progress bar ── */
+    .progress-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--purple)); border-radius: 2px; transition: width 0.6s ease; }
+
+    /* ── Calendar ── */
+    .cal-day {
+      width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center;
+      justify-content: center; font-size: 14px; font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500; cursor: pointer; transition: all 0.15s;
+    }
+    .cal-day:not(.empty):not(.disabled):hover { background: rgba(56,189,248,0.15); color: var(--blue); }
+    .cal-day.available { border: 1px solid rgba(56,189,248,0.2); color: var(--text); }
+    .cal-day.available:hover { border-color: var(--blue); background: rgba(56,189,248,0.1); }
+    .cal-day.selected { background: linear-gradient(135deg, #0EA5E9, #7C3AED); color: white; border: none; }
+    .cal-day.today { border: 1px solid rgba(52,211,153,0.4); color: var(--green); }
+    .cal-day.disabled { color: rgba(255,255,255,0.15); cursor: not-allowed; }
+    .cal-day.empty { cursor: default; }
+
+    /* ── Time slot ── */
+    .time-slot {
+      padding: 10px 16px; border-radius: 10px; border: 1px solid var(--border);
+      cursor: pointer; transition: all 0.15s; font-size: 13px; font-family: 'Space Grotesk', sans-serif;
+      font-weight: 500; text-align: center; color: var(--text);
+    }
+    .time-slot:hover { border-color: var(--border-glow); background: rgba(56,189,248,0.06); color: var(--blue); }
+    .time-slot.selected { border-color: var(--blue); background: rgba(56,189,248,0.15); color: var(--blue); }
+    .time-slot.unavailable { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── Curriculum ── */
+    .module-header {
+      padding: 14px 16px; cursor: pointer; transition: background 0.15s;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .module-header:hover { background: var(--surface-hover); }
+    .module-body { padding: 0 16px 14px 52px; display: none; }
+    .module-body.open { display: block; }
+    .lesson-item { padding: 8px 0; border-top: 1px solid var(--border); display: flex; align-items: center; gap-8px: gap: 8px; font-size: 14px; color: var(--muted); }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px); z-index: 200;
+      display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: #0B0F2A; border: 1px solid var(--border-glow); border-radius: 24px; max-width: 520px; width: 100%; padding: 32px; position: relative; max-height: 92vh; overflow-y: auto; }
+
+    /* ── Chatbot ── */
+    #chatbot-bubble { position: fixed; bottom: 28px; right: 28px; z-index: 1000; }
+    .chat-trigger { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #0EA5E9, #7C3AED); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 30px rgba(56,189,248,0.35); transition: all 0.2s ease; border: none; }
+    .chat-trigger:hover { transform: scale(1.08); }
+    .chat-window { position: absolute; bottom: 74px; right: 0; width: 360px; border-radius: 20px; overflow: hidden; display: none; flex-direction: column; background: #0B0F2A; border: 1px solid var(--border-glow); box-shadow: 0 24px 60px rgba(0,0,0,0.6), 0 0 40px rgba(56,189,248,0.1); height: 480px; }
+    .chat-window.open { display: flex; }
+    .chat-header { padding: 16px 20px; background: linear-gradient(135deg, rgba(14,165,233,0.15), rgba(124,58,237,0.15)); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+    .chat-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #0EA5E9, #7C3AED); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
+    .msg { max-width: 80%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; }
+    .msg-bot { background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 4px 14px 14px 14px; align-self: flex-start; color: var(--text); }
+    .msg-user { background: linear-gradient(135deg, rgba(14,165,233,0.25), rgba(124,58,237,0.25)); border: 1px solid rgba(56,189,248,0.2); border-radius: 14px 4px 14px 14px; align-self: flex-end; color: var(--heading); }
+    .chat-quick { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px; }
+    .quick-btn { padding: 6px 12px; border-radius: 20px; font-size: 12px; background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.2); color: var(--blue); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .quick-btn:hover { background: rgba(56,189,248,0.15); }
+    .chat-input-row { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border); }
+    .chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+    .chat-input:focus { border-color: rgba(56,189,248,0.4); }
+    .chat-input::placeholder { color: var(--muted); }
+    .chat-send { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; background: linear-gradient(135deg, #0EA5E9, #7C3AED); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    @keyframes ping { 0%{transform:scale(1);opacity:1} 75%,100%{transform:scale(2);opacity:0} }
+    .ping { animation: ping 1.5s cubic-bezier(0,0,0.2,1) infinite; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation: fadeUp 0.5s ease forwards; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    section { position: relative; z-index: 1; }
+
+    /* Habla con un asesor */
+    .advisor-wrap { position: relative; }
+    .btn-advisor {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(52,211,153,0.12), rgba(56,189,248,0.12));
+      border: 1px solid rgba(52,211,153,0.3);
+      color: var(--green); font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; font-size: 14px; border-radius: 12px; cursor: pointer;
+      padding: 12px 14px;
+      transition: all 0.2s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-advisor:hover { background: rgba(52,211,153,0.18); border-color: var(--green); }
+    .advisor-menu {
+      display: none; position: absolute; left: 0; right: 0; top: calc(100% + 8px);
+      z-index: 30; flex-direction: column; gap: 6px; padding: 8px;
+      border-radius: 14px;
+      background: rgba(8,12,36,0.98);
+      border: 1px solid rgba(56,189,248,0.3);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    }
+    .advisor-wrap.open .advisor-menu { display: flex; }
+    .advisor-menu a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      font-size: 13px; font-weight: 500; text-decoration: none; color: var(--text);
+      transition: all 0.18s ease;
+    }
+    .advisor-menu a:hover { background: rgba(255,255,255,0.06); }
+    .advisor-menu a .ico { width: 28px; height: 28px; border-radius: 8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .advisor-menu a small { display:block; color: var(--muted); font-size: 11px; font-weight: 400; }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar px-6 py-3">
+    <div class="flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2" style="text-decoration:none;">
+        <img src="angroup.png" alt="ANGROUP" style="height:42px;width:42px;border-radius:10px;object-fit:cover;" />
+      </a>
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="btn-secondary px-4 py-2 text-sm" style="text-decoration:none;">← Todos los cursos</a>
+        <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20gustar%C3%ADa%20hablar%20con%20un%20asesor%20sobre%20un%20curso." target="_blank" rel="noopener" class="btn-primary px-5 py-2 text-sm" style="text-decoration:none;"><span>Habla con un asesor</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─────────────────── HERO + CONTENIDO ─────────────────── -->
+  <section class="pt-28 pb-8 px-5">
+    <div class="max-w-6xl mx-auto">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-sm text-slate-500 mb-6">
+        <a href="index.html" class="hover:text-white transition-colors" style="text-decoration:none;">Inicio</a>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span id="breadcrumbArea">Cursos</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span class="text-slate-300" id="breadcrumbNombre">Curso presencial</span>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-8">
+        <!-- LEFT: título + pestañas -->
+        <div class="lg:col-span-2">
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="badge badge-blue" id="heroArea">Capacitación Industrial</span>
+            <span class="badge badge-green">
+              <span style="width:5px;height:5px;background:var(--green);border-radius:50%;"></span>Presencial
+            </span>
+            <span class="badge badge-purple">Registro STPS DC-5</span>
+          </div>
+          <h1 class="text-4xl lg:text-5xl font-bold mb-4 leading-tight" id="heroNombre">
+            Curso Presencial<br/><span class="grad-text">ANGROUP</span>
+          </h1>
+          <div class="flex flex-wrap gap-6 text-sm text-slate-400 mb-6">
+            <div class="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span id="heroHoras">Horas de capacitación</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              En tus instalaciones
+            </div>
+            <div class="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Constancia DC-3
+            </div>
+            <div class="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              70% práctico
+            </div>
+          </div>
+
+          <!-- Solo Descripción -->
+          <div>
+            <div class="tab-panel active" id="tab-descripcion">
+              <div class="glass rounded-2xl p-6">
+                <h3 class="font-bold text-xl mb-4" id="descTitulo">Objetivos del curso</h3>
+                <p class="text-slate-400 text-sm mb-5 leading-relaxed" id="descTexto">Este curso presencial está diseñado para equipar a los participantes con conocimientos y habilidades prácticas aplicables de inmediato en su área de trabajo. Nuestro modelo 70% práctico — 30% teórico garantiza que el aprendizaje sea directo y efectivo.</p>
+                <h3 class="font-bold text-lg mb-3">El curso incluye</h3>
+                <div class="grid md:grid-cols-2 gap-3 mb-6">
+                  <div class="flex items-start gap-2 text-sm text-slate-300">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" class="mt-0.5 flex-shrink-0"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Constancia de habilidades laborales DC-3
+                  </div>
+                  <div class="flex items-start gap-2 text-sm text-slate-300">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" class="mt-0.5 flex-shrink-0"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Certificado de finalización
+                  </div>
+                  <div class="flex items-start gap-2 text-sm text-slate-300">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" class="mt-0.5 flex-shrink-0"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Carpeta de evidencias para auditorías
+                  </div>
+                  <div class="flex items-start gap-2 text-sm text-slate-300">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" class="mt-0.5 flex-shrink-0"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Manual del curso en físico
+                  </div>
+                  <div class="flex items-start gap-2 text-sm text-slate-300">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" class="mt-0.5 flex-shrink-0"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Acceso a plataforma LMS ANGROUP
+                  </div>
+                  <div class="flex items-start gap-2 text-sm text-slate-300">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" class="mt-0.5 flex-shrink-0"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    Instructor certificado STPS (DC-5)
+                  </div>
+                </div>
+                <h3 class="font-bold text-lg mb-3">Modalidades disponibles</h3>
+                <ul class="space-y-2 text-sm text-slate-400">
+                  <li class="flex items-center gap-2"><span style="width:5px;height:5px;background:var(--blue);border-radius:50%;flex-shrink:0;"></span>Presencial en tus instalaciones (preferida)</li>
+                  <li class="flex items-center gap-2"><span style="width:5px;height:5px;background:var(--blue);border-radius:50%;flex-shrink:0;"></span>Mixta: presencial + plataforma virtual</li>
+                  <li class="flex items-center gap-2"><span style="width:5px;height:5px;background:var(--blue);border-radius:50%;flex-shrink:0;"></span>Disponible en 1er, 2do y 3er turno</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RIGHT: sticky card + contacto (una sola columna) -->
+        <div class="hidden lg:block">
+          <div class="sticky top-24 space-y-4">
+            <!-- Tarjeta del curso -->
+            <div class="glass rounded-2xl p-6" style="border-color:var(--border-glow);">
+              <div class="rounded-xl overflow-hidden mb-5 relative" style="height:140px;background:linear-gradient(135deg,#0A1628,#0E2147);">
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4">
+                  <div style="width:48px;height:48px;background:rgba(56,189,248,0.15);border-radius:50%;border:1px solid rgba(56,189,248,0.3);display:flex;align-items:center;justify-content:center;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <span class="text-sm font-semibold text-white text-center" id="cardNombre" style="font-family:'Space Grotesk',sans-serif;">Curso Presencial ANGROUP</span>
+                  <span class="badge badge-green" id="cardHoras">Horas de capacitación</span>
+                </div>
+              </div>
+              <div class="advisor-wrap mb-4">
+                <button type="button" class="btn-advisor" onclick="toggleAdvisor(event,this)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                  Habla con un asesor
+                </button>
+                <div class="advisor-menu">
+                  <a id="advisorWa" href="https://wa.me/526563727555" target="_blank" rel="noopener">
+                    <span class="ico" style="background:rgba(52,211,153,0.15);">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    </span>
+                    <span>WhatsApp<small>+52 656 372 7555</small></span>
+                  </a>
+                  <a id="advisorMail" href="mailto:vinculacion@angroup.mx">
+                    <span class="ico" style="background:rgba(56,189,248,0.15);">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                    </span>
+                    <span>Correo<small>vinculacion@angroup.mx</small></span>
+                  </a>
+                </div>
+              </div>
+              <ul class="space-y-2 text-sm text-slate-400">
+                <li class="flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Modalidad presencial (en tu empresa)
+                </li>
+                <li class="flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Constancia DC-3 incluida
+                </li>
+                <li class="flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Certificado de finalización
+                </li>
+                <li class="flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Carpeta de evidencias auditables
+                </li>
+                <li class="flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Manual del curso en físico
+                </li>
+                <li class="flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  Horarios flexibles incl. 3er turno
+                </li>
+              </ul>
+            </div>
+            <!-- Contacto -->
+            <div class="glass rounded-2xl p-5">
+              <p class="text-xs text-slate-500 font-semibold mb-3" style="font-family:'Space Grotesk',sans-serif;">CONTACTO ANGROUP</p>
+              <div class="grid grid-cols-1 gap-2 text-sm text-slate-400">
+                <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20quiero%20agendar%20un%20curso%20presencial." target="_blank" rel="noopener" class="flex items-center gap-2 hover:text-white transition-colors" style="text-decoration:none;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#34D399"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207z"/></svg>
+                  WhatsApp +52 656 372 7555
+                </a>
+                <a href="mailto:vinculacion@angroup.mx?subject=Quiero%20agendar%20un%20curso" class="flex items-center gap-2 hover:text-white transition-colors" style="text-decoration:none;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <span id="instrSideEmail">vinculacion@angroup.mx</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile contact card -->
+      <div class="glass rounded-2xl p-5 lg:hidden mt-6">
+        <p class="text-slate-400 text-sm mb-3">¿Tienes dudas sobre este curso?</p>
+        <div class="flex flex-col gap-2">
+          <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20me%20interesa%20este%20curso%20presencial.%20Me%20gustar%C3%ADa%20hablar%20con%20un%20asesor." target="_blank" rel="noopener" class="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold" style="background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:#34D399;text-decoration:none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207z"/></svg>
+            WhatsApp · +52 656 372 7555
+          </a>
+          <a href="mailto:vinculacion@angroup.mx?subject=Consulta%20de%20curso" class="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold" style="background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.3);color:#38BDF8;text-decoration:none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+            vinculacion@angroup.mx
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────── SCHEDULE MODAL ─────────────────── -->
+  <div class="modal-overlay" id="scheduleModal">
+    <div class="modal-box fade-up">
+      <button onclick="closeScheduleModal()" style="position:absolute;top:20px;right:20px;background:none;border:none;cursor:pointer;color:var(--muted);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div id="modalContent">
+        <h3 class="text-xl font-bold mb-1">Agendar curso presencial</h3>
+        <p class="text-sm text-slate-400 mb-6">Selecciona el turno y días disponibles. Te contactaremos para confirmar la fecha y lugar.</p>
+
+        <div class="space-y-5">
+          <!-- Step 1: modalidad -->
+          <div>
+            <label class="text-xs font-semibold text-slate-400 block mb-2" style="font-family:'Space Grotesk',sans-serif;">MODALIDAD</label>
+            <div class="grid grid-cols-2 gap-3">
+              <button class="time-slot selected text-left p-3" onclick="selectModality(this,'presencial')">
+                <div class="font-semibold text-sm mb-0.5">Presencial</div>
+                <div class="text-xs text-slate-500">En tus instalaciones</div>
+              </button>
+              <button class="time-slot text-left p-3" onclick="selectModality(this,'mixta')">
+                <div class="font-semibold text-sm mb-0.5">Mixta</div>
+                <div class="text-xs text-slate-500">Presencial + plataforma virtual</div>
+              </button>
+            </div>
+          </div>
+          <!-- Step 2: turno -->
+          <div>
+            <label class="text-xs font-semibold text-slate-400 block mb-2" style="font-family:'Space Grotesk',sans-serif;">TURNO</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button class="time-slot text-center text-sm" onclick="selectSchedule(this,'1er turno')">1er turno</button>
+              <button class="time-slot text-center text-sm selected" onclick="selectSchedule(this,'2do turno')">2do turno</button>
+              <button class="time-slot text-center text-sm" onclick="selectSchedule(this,'3er turno')">3er turno</button>
+            </div>
+          </div>
+          <!-- Step 3: fecha -->
+          <div>
+            <label class="text-xs font-semibold text-slate-400 block mb-2" style="font-family:'Space Grotesk',sans-serif;">FECHA PREFERIDA</label>
+            <div class="glass rounded-xl p-4" style="border-color:rgba(56,189,248,0.15);">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-sm font-semibold text-white" id="calMonth" style="font-family:'Space Grotesk',sans-serif;">Abril 2026</span>
+                <div class="flex gap-1">
+                  <button onclick="prevMonth()" type="button" class="text-slate-400 hover:text-white transition-colors cursor-pointer p-1">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  <button onclick="nextMonth()" type="button" class="text-slate-400 hover:text-white transition-colors cursor-pointer p-1">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                <span class="text-xs text-slate-600" style="font-family:'Space Grotesk',sans-serif;">L</span>
+                <span class="text-xs text-slate-600" style="font-family:'Space Grotesk',sans-serif;">M</span>
+                <span class="text-xs text-slate-600" style="font-family:'Space Grotesk',sans-serif;">Mi</span>
+                <span class="text-xs text-slate-600" style="font-family:'Space Grotesk',sans-serif;">J</span>
+                <span class="text-xs text-slate-600" style="font-family:'Space Grotesk',sans-serif;">V</span>
+                <span class="text-xs text-slate-600" style="font-family:'Space Grotesk',sans-serif;">S</span>
+                <span class="text-xs text-slate-600" style="font-family:'Space Grotesk',sans-serif;">D</span>
+              </div>
+              <div class="grid grid-cols-7 gap-1 text-center" id="calGrid"></div>
+              <div id="selectedDateDisplay" class="mt-3 text-xs text-green-400 font-semibold" style="display:none;font-family:'Space Grotesk',sans-serif;"></div>
+            </div>
+          </div>
+          <!-- Datos de la empresa -->
+          <div>
+            <label class="text-xs font-semibold text-slate-400 block mb-2" style="font-family:'Space Grotesk',sans-serif;">DATOS DE CONTACTO</label>
+            <div class="space-y-3">
+              <input type="text" placeholder="Nombre completo" class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-500 outline-none" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);" onfocus="this.style.borderColor='rgba(56,189,248,0.4)'" onblur="this.style.borderColor='var(--border)'" />
+              <input type="text" placeholder="Empresa / Organización" class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-500 outline-none" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);" onfocus="this.style.borderColor='rgba(56,189,248,0.4)'" onblur="this.style.borderColor='var(--border)'" />
+              <input type="tel" placeholder="WhatsApp / Teléfono" class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-500 outline-none" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);" onfocus="this.style.borderColor='rgba(56,189,248,0.4)'" onblur="this.style.borderColor='var(--border)'" />
+              <input type="email" placeholder="Correo electrónico" class="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-slate-500 outline-none" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);" onfocus="this.style.borderColor='rgba(56,189,248,0.4)'" onblur="this.style.borderColor='var(--border)'" />
+            </div>
+          </div>
+          <button class="btn-primary w-full py-4 text-base" onclick="bookingConfirmed()"><span>Solicitar fecha de curso</span></button>
+          <p class="text-xs text-center text-slate-500">Un asesor ANGROUP te contactará para coordinar la fecha, lugar y número de participantes</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────────── CHATBOT ─────────────────── -->
+  <div id="chatbot-bubble">
+    <button class="chat-trigger" onclick="toggleChat()" aria-label="Abrir asistente">
+      <svg id="chatIcon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <svg id="closeIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" style="display:none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-header">
+        <div class="chat-avatar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+          <div class="font-semibold text-white text-sm" style="font-family:'Space Grotesk',sans-serif;">Asesor ANGROUP</div>
+          <div class="flex items-center gap-1 text-xs text-slate-400">
+            <span style="width:6px;height:6px;background:#34D399;border-radius:50%;display:inline-block;"></span>
+            Capacitación industrial presencial
+          </div>
+        </div>
+        <button onclick="toggleChat()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg msg-bot" id="chatInitMsg">
+          ¡Hola! Soy el asistente de <strong>ANGROUP</strong>. ¿Tienes alguna pregunta sobre este curso, fechas disponibles o cómo agendarlo en tu empresa?
+        </div>
+      </div>
+      <div class="chat-quick" id="quickOptions">
+        <button class="quick-btn" onclick="sendQuick('¿Cómo agendo el curso en mi empresa?')">Agendar</button>
+        <button class="quick-btn" onclick="sendQuick('¿Qué incluye la constancia DC-3?')">DC-3</button>
+        <button class="quick-btn" onclick="sendQuick('Quiero cotizar para un grupo')">Cotizar</button>
+      </div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chatInput" type="text" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter') sendMessage()" />
+        <button class="chat-send" onclick="sendMessage()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script>
+    // ── Tabs ──
+    function switchTab(id, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      if (btn) btn.classList.add('active');
+      else document.querySelectorAll('.tab-btn').forEach(b => { if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(id)) b.classList.add('active'); });
+    }
+
+    // ── Video toggle ──
+    let playing = false;
+    function toggleVideo() {
+      playing = !playing;
+      document.getElementById('playIcon').style.display = playing ? 'none' : 'block';
+      document.getElementById('pauseIcon').style.display = playing ? 'block' : 'none';
+      if (playing) {
+        let w = 35;
+        const iv = setInterval(() => {
+          w += 0.05;
+          if (w >= 100) { clearInterval(iv); playing = false; document.getElementById('playIcon').style.display = 'block'; document.getElementById('pauseIcon').style.display = 'none'; }
+          document.getElementById('progressFill').style.width = w + '%';
+        }, 100);
+      }
+    }
+    function seekVideo(e, el) {
+      const rect = el.getBoundingClientRect();
+      const pct = ((e.clientX - rect.left) / rect.width) * 100;
+      document.getElementById('progressFill').style.width = pct + '%';
+    }
+
+    // ── Curriculum ──
+    // ── Read URL params to fill course info ──
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const nombre = params.get('nombre') ? decodeURIComponent(params.get('nombre')) : 'Curso Presencial ANGROUP';
+      const horas = params.get('horas') ? params.get('horas') + ' horas de capacitación' : 'Horas de capacitación';
+      const area = params.get('area') ? decodeURIComponent(params.get('area')) : 'Capacitación Industrial';
+      const areaLabel = {
+        'manufactura': 'Manufactura Electrónica',
+        'seguridad': 'Seguridad Industrial',
+        'automotriz': 'Industria Automotriz',
+        'lean': 'Lean / Mejora Continua',
+        'iso': 'Formación ISO',
+        'soldadura': 'Soldadura Industrial',
+        'automatizacion': 'Automatización',
+        'diseno': 'Diseño CAD/CAM',
+        'gerencial': 'Habilidades Gerenciales'
+      }[area] || 'Capacitación Industrial';
+
+      // Update DOM
+      document.getElementById('heroNombre').innerHTML = nombre + '<br/><span class="grad-text">Presencial</span>';
+      document.getElementById('heroHoras').textContent = horas;
+      document.getElementById('heroArea').textContent = areaLabel;
+      document.getElementById('breadcrumbArea').textContent = areaLabel;
+      document.getElementById('breadcrumbNombre').textContent = nombre;
+      document.getElementById('cardNombre').textContent = nombre;
+      document.getElementById('cardHoras').textContent = horas;
+      document.title = nombre + ' — ANGROUP';
+
+      // Personalizar enlaces "Habla con un asesor" con el nombre del curso
+      var msg = 'Hola ANGROUP, me interesa el curso "' + nombre + '". Me gustaría hablar con un asesor.';
+      var waEl = document.getElementById('advisorWa');
+      var mailEl = document.getElementById('advisorMail');
+      if (waEl) waEl.href = 'https://wa.me/526563727555?text=' + encodeURIComponent(msg);
+      if (mailEl) mailEl.href = 'mailto:vinculacion@angroup.mx?subject=' + encodeURIComponent('Consulta de curso: ' + nombre) + '&body=' + encodeURIComponent(msg);
+    })();
+
+    // ── Instructor data by course area ──
+    (function() {
+      const instrMap = {
+        manufactura:    { name: 'Fabián Torres',  email: 'vinculacion@angroup.mx' },
+        seguridad:      { name: 'Adrián Nájera',  email: 'vinculacion@angroup.mx' },
+        automotriz:     { name: 'César Fierro',   email: 'vinculacion@angroup.mx'  },
+        lean:           { name: 'César Fierro',   email: 'vinculacion@angroup.mx'  },
+        iso:            { name: 'Adrián Nájera',  email: 'vinculacion@angroup.mx' },
+        soldadura:      { name: 'Fabián Torres',  email: 'vinculacion@angroup.mx' },
+        automatizacion: { name: 'Fabián Torres',  email: 'vinculacion@angroup.mx' },
+        diseno:         { name: 'Fabián Torres',  email: 'vinculacion@angroup.mx' },
+        gerencial:      { name: 'César Fierro',   email: 'vinculacion@angroup.mx'  },
+      };
+      const params = new URLSearchParams(window.location.search);
+      const area = params.get('area') || 'lean';
+      const instr = instrMap[area] || instrMap['lean'];
+
+      document.getElementById('instrSideEmail').textContent = instr.email;
+    })();
+
+    const modules = [
+      { title: 'Módulo 1: Introducción y fundamentos', lessons: ['Objetivos del curso', 'Marco normativo aplicable', 'Conceptos clave', 'Roles y responsabilidades'], done: false, current: true },
+      { title: 'Módulo 2: Desarrollo teórico (30%)', lessons: ['Principios y bases teóricas', 'Estándares y normas aplicables', 'Casos de estudio', 'Evaluación intermedia'], done: false },
+      { title: 'Módulo 3: Práctica aplicada (70%)', lessons: ['Ejercicios prácticos guiados', 'Simulaciones en entorno real', 'Resolución de problemas', 'Trabajo en equipo'], done: false },
+      { title: 'Módulo 4: Evaluación y certificación', lessons: ['Examen final escrito', 'Evaluación práctica', 'Retroalimentación individual', 'Entrega de constancia DC-3 y certificado'], done: false },
+    ];
+    const list = document.getElementById('curriculumList');
+    if (list) modules.forEach((m, i) => {
+      const div = document.createElement('div');
+      div.style.borderTop = '1px solid var(--border)';
+      div.innerHTML = `
+        <div class="module-header" onclick="toggleModule(${i})">
+          <div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+            ${m.done ? 'background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3)' : m.current ? 'background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3)' : 'background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)'}">
+            ${m.done ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' : m.current ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="#38BDF8"><polygon points="5 3 19 12 5 21 5 3"/></svg>' : '<span style="width:8px;height:8px;background:rgba(255,255,255,0.2);border-radius:50%;"></span>'}
+          </div>
+          <div class="flex-1">
+            <div class="text-sm font-semibold text-white" style="font-family:'Space Grotesk',sans-serif;">${m.title}</div>
+            <div class="text-xs text-slate-500 mt-0.5">${m.lessons.length} lecciones · ${m.done ? '<span style="color:var(--green);">Completado</span>' : m.current ? '<span style="color:var(--blue);">En progreso</span>' : 'Próximamente'}</div>
+          </div>
+          <svg width="16" height="16" id="chevron-${i}" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="transition:transform 0.2s;"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="module-body" id="module-${i}">
+          ${m.lessons.map(l => `<div class="flex items-center gap-2 py-2 text-sm text-slate-400 border-t" style="border-color:rgba(255,255,255,0.04);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            ${l}
+          </div>`).join('')}
+        </div>`;
+      list.appendChild(div);
+    });
+    function toggleModule(i) {
+      const body = document.getElementById('module-' + i);
+      const chev = document.getElementById('chevron-' + i);
+      const open = body.classList.toggle('open');
+      chev.style.transform = open ? 'rotate(180deg)' : '';
+    }
+
+    // ── Calendar ──
+    const today = new Date(); today.setHours(0,0,0,0);
+    let calYear = today.getFullYear(), calMonth = today.getMonth();
+    let selectedDate = '';
+
+    function renderCal() {
+      const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+      document.getElementById('calMonth').textContent = months[calMonth] + ' ' + calYear;
+      const grid = document.getElementById('calGrid');
+      grid.innerHTML = '';
+      const first = new Date(calYear, calMonth, 1).getDay();
+      const offset = (first === 0) ? 6 : first - 1;
+      const days = new Date(calYear, calMonth + 1, 0).getDate();
+      for (let i = 0; i < offset; i++) {
+        const e = document.createElement('div'); e.className = 'cal-day empty'; grid.appendChild(e);
+      }
+      for (let d = 1; d <= days; d++) {
+        const e = document.createElement('div');
+        const date = new Date(calYear, calMonth, d);
+        const dow = date.getDay(); // 0=Sun
+        const isPast = date < today;
+        const isSun = dow === 0;
+        const isToday = date.getTime() === today.getTime();
+        if (isPast || isSun) {
+          e.className = 'cal-day disabled';
+        } else if (isToday) {
+          e.className = 'cal-day today available';
+          e.onclick = () => selectDay(e, d);
+        } else {
+          e.className = 'cal-day available';
+          e.onclick = () => selectDay(e, d);
+        }
+        e.textContent = d;
+        grid.appendChild(e);
+      }
+    }
+
+    function selectDay(el, day) {
+      document.querySelectorAll('.cal-day.selected').forEach(e => { e.classList.remove('selected'); e.classList.add('available'); });
+      el.classList.remove('available'); el.classList.add('selected');
+      const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+      selectedDate = `${day} de ${months[calMonth]} de ${calYear}`;
+      const disp = document.getElementById('selectedDateDisplay');
+      disp.textContent = '✓ Fecha seleccionada: ' + selectedDate;
+      disp.style.display = 'block';
+    }
+
+    function prevMonth() {
+      const prev = new Date(calYear, calMonth - 1, 1);
+      if (prev >= new Date(today.getFullYear(), today.getMonth(), 1)) { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCal(); }
+    }
+    function nextMonth() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCal(); }
+    renderCal();
+
+    // ── Habla con un asesor ──
+    function toggleAdvisor(e, btn) {
+      e.stopPropagation();
+      var wrap = btn.closest('.advisor-wrap');
+      var isOpen = wrap.classList.contains('open');
+      document.querySelectorAll('.advisor-wrap.open').forEach(function(w){ w.classList.remove('open'); });
+      if (!isOpen) wrap.classList.add('open');
+    }
+    document.addEventListener('click', function(){
+      document.querySelectorAll('.advisor-wrap.open').forEach(function(w){ w.classList.remove('open'); });
+    });
+
+    // ── Modal ──
+    function openScheduleModal() { document.getElementById('scheduleModal').classList.add('open'); }
+    function closeScheduleModal() { document.getElementById('scheduleModal').classList.remove('open'); }
+    document.getElementById('scheduleModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeScheduleModal(); });
+
+    function selectModality(el, val) {
+      el.closest('.grid').querySelectorAll('.time-slot').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    function selectSchedule(el) {
+      el.closest('.grid').querySelectorAll('.time-slot').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    function toggleDay(el) {
+      el.classList.toggle('selected');
+    }
+    function bookingConfirmed() {
+      document.getElementById('modalContent').innerHTML = `
+        <div class="text-center py-8">
+          <div style="width:72px;height:72px;background:rgba(52,211,153,0.15);border-radius:50%;border:1px solid rgba(52,211,153,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h3 class="text-2xl font-bold text-white mb-2">¡Inscripción confirmada!</h3>
+          <p class="text-slate-400 mb-6">Un asesor de ANGROUP te contactará en breve para confirmar la fecha, el lugar y los detalles de tu curso presencial.</p>
+          <div class="glass rounded-xl p-4 mb-6" style="border-color:rgba(56,189,248,0.2);">
+            <p class="text-xs text-slate-500 mb-3" style="font-family:'Space Grotesk',sans-serif;">¿PREFIERES CONTACTARNOS DIRECTO?</p>
+            <div class="flex flex-col sm:flex-row gap-2 justify-center">
+              <a href="https://wa.me/526563727555?text=Hola%20ANGROUP%2C%20acabo%20de%20solicitar%20un%20curso%20presencial%20y%20quiero%20m%C3%A1s%20informaci%C3%B3n." target="_blank" rel="noopener" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold" style="background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:#34D399;text-decoration:none;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 0 1-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 0 1 8.413 3.488 11.824 11.824 0 0 1 3.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 0 1-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 0 0 1.51 5.26l-.999 3.648 3.978-1.207z"/></svg>
+                +52 656 372 7555
+              </a>
+              <a href="mailto:vinculacion@angroup.mx" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold" style="background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.3);color:#38BDF8;text-decoration:none;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                vinculacion@angroup.mx
+              </a>
+            </div>
+          </div>
+          <button class="btn-primary px-8 py-3 text-sm" onclick="closeScheduleModal()"><span>Listo</span></button>
+        </div>`;
+    }
+
+    // ── Chat ──
+    let chatOpen = false;
+    function toggleChat() {
+      chatOpen = !chatOpen;
+      document.getElementById('chatWindow').classList.toggle('open', chatOpen);
+      document.getElementById('chatIcon').style.display = chatOpen ? 'none' : 'block';
+      document.getElementById('closeIcon').style.display = chatOpen ? 'block' : 'none';
+    }
+    function openChat() { if (!chatOpen) toggleChat(); }
+
+    const botMap = {
+      'agendar': 'Para agendar el curso presencial en tu empresa, usa el calendario de esta página o contáctanos directamente:<br/><br/>📞 <strong>+52 656 372 7555</strong><br/>📧 vinculacion@angroup.mx<br/><br/>Nos adaptamos a tu horario, incluyendo el 3er turno.',
+      'dc3': 'La constancia DC-3 es el documento oficial de habilidades laborales que emite la STPS.<br/><br/>Todos nuestros cursos incluyen:<br/>✓ Constancia DC-3<br/>✓ Certificado de finalización<br/>✓ Carpeta de evidencias auditables<br/>✓ Manual del curso en físico',
+      'cotizar': 'Para cotizar un grupo o curso empresarial contáctanos:<br/><br/>📞 <strong>+52 656 372 7555</strong><br/>📧 vinculacion@angroup.mx<br/>📧 vinculacion@angroup.mx<br/><br/>Dinos: área del curso, número de participantes y fechas disponibles.',
+      'default': 'Para esa consulta te recomiendo contactar directamente a nuestro equipo:<br/><br/>📞 <strong>+52 656 372 7555</strong><br/>📧 vinculacion@angroup.mx<br/>🌐 www.angroup.mx'
+    };
+    function getResp(msg) {
+      const l = msg.toLowerCase();
+      if (l.includes('agenda') || l.includes('empresa') || l.includes('agendar') || l.includes('fecha') || l.includes('horario')) return botMap['agendar'];
+      if (l.includes('dc-3') || l.includes('dc3') || l.includes('constancia') || l.includes('certific')) return botMap['dc3'];
+      if (l.includes('cotiz') || l.includes('grupo') || l.includes('precio') || l.includes('costo')) return botMap['cotizar'];
+      return botMap['default'];
+    }
+    function addMsg(text, isUser) {
+      const msgs = document.getElementById('chatMessages');
+      const d = document.createElement('div');
+      d.className = 'msg ' + (isUser ? 'msg-user' : 'msg-bot');
+      d.innerHTML = text.replace(/\n/g, '<br/>');
+      msgs.appendChild(d);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+    function sendMessage() {
+      const inp = document.getElementById('chatInput');
+      const t = inp.value.trim();
+      if (!t) return;
+      addMsg(t, true);
+      inp.value = '';
+      document.getElementById('quickOptions').style.display = 'none';
+      setTimeout(() => addMsg(getResp(t), false), 500);
+    }
+    function sendQuick(t) {
+      addMsg(t, true);
+      document.getElementById('quickOptions').style.display = 'none';
+      setTimeout(() => addMsg(getResp(t), false), 500);
+    }
+  </script>
+</body>
+</html>

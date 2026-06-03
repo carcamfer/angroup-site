@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FC 2026 INDUSTRIA — Torneo Empresarial Mundialista | ANGROUP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #03050F;
+      --bg2: #060A1A;
+      --surface: rgba(255,255,255,0.04);
+      --surface-hover: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --blue: #38BDF8;
+      --purple: #A78BFA;
+      --green: #34D399;
+      --gold: #FBBF24;
+      --gold2: #F59E0B;
+      --text: #E2E8F0;
+      --muted: #94A3B8;
+      --heading: #F1F5F9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    h1,h2,h3,h4,h5 { font-family: 'Space Grotesk', sans-serif; color: var(--heading); }
+
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(251,191,36,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(251,191,36,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .bg-orb {
+      position: fixed; border-radius: 50%; filter: blur(140px);
+      pointer-events: none; z-index: 0;
+    }
+    .orb-1 { width: 700px; height: 700px; top: -250px; left: -200px; background: rgba(56,189,248,0.06); }
+    .orb-2 { width: 600px; height: 600px; bottom: -100px; right: -150px; background: rgba(251,191,36,0.06); }
+    .orb-3 { width: 400px; height: 400px; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(167,139,250,0.04); }
+
+    section { position: relative; z-index: 1; }
+
+    .glass {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .glass-gold {
+      background: rgba(251,191,36,0.05);
+      border: 1px solid rgba(251,191,36,0.2);
+      backdrop-filter: blur(16px);
+    }
+    .glass-hover:hover {
+      background: var(--surface-hover);
+      border-color: rgba(251,191,36,0.3);
+      transition: all 0.25s ease;
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 40px); max-width: 1100px;
+      z-index: 100; border-radius: 16px;
+      background: rgba(3,5,15,0.85);
+      border: 1px solid rgba(251,191,36,0.15);
+      backdrop-filter: blur(20px);
+    }
+
+    /* ── Buttons ── */
+    .btn-gold {
+      background: linear-gradient(135deg, #F59E0B, #FBBF24);
+      color: #0a0700;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800; border-radius: 14px;
+      transition: all 0.2s ease; cursor: pointer;
+      border: none; position: relative; overflow: hidden;
+      letter-spacing: 0.03em;
+    }
+    .btn-gold::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, #FBBF24, #FDE68A);
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .btn-gold:hover::before { opacity: 1; }
+    .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(251,191,36,0.4); }
+    .btn-gold span { position: relative; z-index: 1; }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(251,191,36,0.4);
+      color: var(--gold);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600; border-radius: 14px; cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-outline:hover { background: rgba(251,191,36,0.08); border-color: var(--gold); }
+
+    /* ── Hero ── */
+    .hero-bg {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(251,191,36,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 20% 80%, rgba(56,189,248,0.06) 0%, transparent 50%),
+        var(--bg);
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 8vw, 6rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #FBBF24 0%, #FDE68A 40%, #F59E0B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 24px;
+      background: rgba(251,191,36,0.1);
+      border: 1px solid rgba(251,191,36,0.25);
+      color: var(--gold);
+      font-size: 13px; font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+    }
+    .section-title-gold {
+      background: linear-gradient(135deg, #FBBF24, #FDE68A);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Concept cards ── */
+    .concept-card {
+      border-radius: 20px; padding: 28px 24px;
+      transition: all 0.25s ease;
+    }
+    .concept-card:hover { transform: translateY(-4px); }
+
+    /* ── Prize bar ── */
+    .prize-bar {
+      border-radius: 16px; padding: 22px 32px;
+      display: flex; align-items: center; justify-between;
+      gap: 16px;
+    }
+
+    /* ── Problem bullets ── */
+    .problem-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 20px; border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: border-color 0.2s;
+    }
+    .problem-item:hover { border-color: rgba(251,191,36,0.2); }
+
+    /* ── Solution cards ── */
+    .solution-card {
+      border-radius: 20px; padding: 32px 24px; text-align: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      transition: all 0.25s;
+    }
+    .solution-card:hover { border-color: rgba(251,191,36,0.25); background: rgba(251,191,36,0.04); transform: translateY(-3px); }
+
+    /* ── Model items ── */
+    .model-item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px; border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: all 0.2s;
+    }
+    .model-item:hover { border-color: rgba(251,191,36,0.25); background: rgba(251,191,36,0.04); }
+    .model-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800; font-size: 0.85rem;
+      color: var(--gold); opacity: 0.6;
+      min-width: 28px;
+    }
+
+    /* ── Value cards ── */
+    .value-card {
+      border-radius: 20px; padding: 28px 24px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      transition: all 0.25s;
+    }
+    .value-card:hover { border-color: rgba(251,191,36,0.25); transform: translateY(-3px); }
+
+    /* ── CTA section ── */
+    .cta-section {
+      background:
+        radial-gradient(ellipse 70% 80% at 50% 50%, rgba(251,191,36,0.07) 0%, transparent 70%),
+        rgba(255,255,255,0.02);
+      border: 1px solid rgba(251,191,36,0.15);
+      border-radius: 28px;
+    }
+
+    /* ── Ticket button ── */
+    .ticket-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 18px 40px;
+      background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 50%, #FDE68A 100%);
+      color: #0a0700;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800; font-size: 1.1rem;
+      border-radius: 16px; border: none; cursor: pointer;
+      transition: all 0.25s ease;
+      letter-spacing: 0.04em;
+      box-shadow: 0 8px 32px rgba(251,191,36,0.35);
+      text-decoration: none;
+    }
+    .ticket-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(251,191,36,0.5);
+    }
+
+    /* ── Stats ── */
+    .stat-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.8rem; font-weight: 800; line-height: 1;
+      color: var(--gold);
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+    .fade-up { animation: fadeUp 0.65s ease forwards; }
+    @keyframes pulse-gold {
+      0%, 100% { box-shadow: 0 0 20px rgba(251,191,36,0.3); }
+      50% { box-shadow: 0 0 40px rgba(251,191,36,0.6); }
+    }
+    .pulse-gold { animation: pulse-gold 2.5s ease-in-out infinite; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(251,191,36,0.2); border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar px-6 py-3">
+    <div class="flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2" style="text-decoration:none;">
+        <img src="angroup.png" alt="ANGROUP" style="height:42px;width:42px;border-radius:10px;object-fit:cover;" />
+      </a>
+      <div class="hidden md:flex items-center gap-6">
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:0.9rem;color:#FBBF24;letter-spacing:0.08em;">⚽ FC 2026 INDUSTRIA</span>
+      </div>
+      <a href="#boletos" class="ticket-btn" style="padding:10px 24px;font-size:0.9rem;">
+        <span>🎟️ Comprar Boletos</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero-bg pt-36 pb-20 px-5">
+    <div class="max-w-5xl mx-auto text-center fade-up">
+      <div class="subtitle-tag mb-6">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        TORNEO EMPRESARIAL MUNDIALISTA · CD. JUÁREZ, CHIHUAHUA
+      </div>
+      <h1 class="hero-title mb-4">FC 2026<br/>INDUSTRIA</h1>
+      <p class="text-xl text-slate-300 mb-4 max-w-2xl mx-auto" style="font-family:'Space Grotesk',sans-serif;font-weight:500;">
+        La industria no solo produce...
+      </p>
+      <p class="text-lg text-slate-400 mb-10 max-w-xl mx-auto">Ahora compite, conecta y se posiciona.</p>
+
+      <div class="flex flex-wrap gap-4 justify-center mb-14">
+        <a href="#boletos" class="ticket-btn pulse-gold">
+          <span>🎟️ Comprar Boletos Ahora</span>
+        </a>
+        <a href="#concepto" class="btn-outline px-8 py-4 text-base" style="text-decoration:none;display:inline-flex;align-items:center;">
+          Ver detalles ↓
+        </a>
+      </div>
+
+      <!-- Stats rápidos -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+        <div class="glass-gold rounded-2xl p-5">
+          <div class="stat-num">48</div>
+          <div class="text-sm text-slate-400 mt-1">Empresas</div>
+        </div>
+        <div class="glass-gold rounded-2xl p-5">
+          <div class="stat-num">+300</div>
+          <div class="text-sm text-slate-400 mt-1">Asistentes VIP</div>
+        </div>
+        <div class="glass-gold rounded-2xl p-5">
+          <div class="stat-num">48</div>
+          <div class="text-sm text-slate-400 mt-1">Selecciones</div>
+        </div>
+        <div class="glass-gold rounded-2xl p-5">
+          <div class="stat-num">$30K</div>
+          <div class="text-sm text-slate-400 mt-1">En premios</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONCEPTO DEL TORNEO -->
+  <section id="concepto" class="py-20 px-5">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <div class="subtitle-tag mb-4" style="display:inline-flex;">CONCEPTO DEL TORNEO</div>
+        <h2 class="section-title section-title-gold">Una experiencia sin precedentes</h2>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="concept-card glass-gold glass-hover text-center">
+          <div style="font-size:2.5rem;margin-bottom:12px;">🏆</div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:#FBBF24;margin-bottom:8px;">48 EMPRESAS</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">48 empresas de la industria participan representando a una selección mundialista en este torneo único.</p>
+        </div>
+        <div class="concept-card glass-gold glass-hover text-center">
+          <div style="font-size:2.5rem;margin-bottom:12px;">🌍</div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:#FBBF24;margin-bottom:8px;">48 SELECCIONES</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Cada empresa adopta la identidad de un país participante del Mundial 2026, compitiendo con orgullo.</p>
+        </div>
+        <div class="concept-card glass-gold glass-hover text-center">
+          <div style="font-size:2.5rem;margin-bottom:12px;">🗺️</div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:#FBBF24;margin-bottom:8px;">UN PAÍS POR EMPRESA</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Tu empresa representa a una nación en el torneo, creando identidad y espíritu de competencia real.</p>
+        </div>
+        <div class="concept-card glass-gold glass-hover text-center">
+          <div style="font-size:2.5rem;margin-bottom:12px;">⭐</div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:#FBBF24;margin-bottom:8px;">EXPERIENCIA ÚNICA</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Una experiencia sin precedentes que combina deporte, networking empresarial y ambiente mundialista premium.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREMIACIÓN -->
+  <section class="py-16 px-5" style="background:rgba(251,191,36,0.02);">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-12">
+        <div class="subtitle-tag mb-4" style="display:inline-flex;">PREMIACIÓN</div>
+        <h2 class="section-title section-title-gold">1ero · 2do · 3ero</h2>
+      </div>
+      <div class="flex flex-col gap-5">
+        <div class="prize-bar" style="background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(251,191,36,0.05));border:1px solid rgba(251,191,36,0.35);border-radius:18px;padding:24px 32px;display:flex;align-items:center;gap:20px;">
+          <div style="font-size:2.8rem;flex-shrink:0;">🥇</div>
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1.8rem;color:#FBBF24;">$15,000</div>
+            <div class="text-slate-400 text-sm font-medium">1er LUGAR</div>
+          </div>
+        </div>
+        <div class="prize-bar" style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:18px;padding:24px 32px;display:flex;align-items:center;gap:20px;">
+          <div style="font-size:2.4rem;flex-shrink:0;">🥈</div>
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1.6rem;color:#CBD5E1;">$10,000</div>
+            <div class="text-slate-400 text-sm font-medium">2do LUGAR</div>
+          </div>
+        </div>
+        <div class="prize-bar" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px 32px;display:flex;align-items:center;gap:20px;">
+          <div style="font-size:2.2rem;flex-shrink:0;">🥉</div>
+          <div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1.4rem;color:#B45309;">$5,000</div>
+            <div class="text-slate-400 text-sm font-medium">3er LUGAR</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EL PROBLEMA -->
+  <section class="py-20 px-5">
+    <div class="max-w-4xl mx-auto">
+      <div class="mb-10">
+        <div class="subtitle-tag mb-4" style="display:inline-flex;">LA SITUACIÓN ACTUAL</div>
+        <h2 class="section-title" style="color:white;">El problema en<br/><span class="section-title-gold">la industria</span></h2>
+      </div>
+      <div class="flex flex-col gap-4">
+        <div class="problem-item">
+          <div style="width:44px;height:44px;background:rgba(251,191,36,0.1);border-radius:12px;border:1px solid rgba(251,191,36,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">⚽</div>
+          <div>
+            <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:4px;">Poco networking real</h4>
+            <p class="text-sm text-slate-400 leading-relaxed">Los eventos actuales no generan conexiones significativas entre empresas. Las oportunidades de negocio se pierden por falta de interacción genuina.</p>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div style="width:44px;height:44px;background:rgba(251,191,36,0.1);border-radius:12px;border:1px solid rgba(251,191,36,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">⚽</div>
+          <div>
+            <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:4px;">Eventos tradicionales sin impacto</h4>
+            <p class="text-sm text-slate-400 leading-relaxed">Las expos y conferencias convencionales ya no captan la atención ni generan el engagement necesario para resultados memorables.</p>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div style="width:44px;height:44px;background:rgba(251,191,36,0.1);border-radius:12px;border:1px solid rgba(251,191,36,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">⚽</div>
+          <div>
+            <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:4px;">Baja integración entre empresas</h4>
+            <p class="text-sm text-slate-400 leading-relaxed">Falta de espacios que fomenten la colaboración y el trabajo en equipo entre diferentes organizaciones de la industria.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NUESTRA SOLUCIÓN -->
+  <section class="py-20 px-5" style="background:rgba(251,191,36,0.02);">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <div class="subtitle-tag mb-4" style="display:inline-flex;">RESPUESTA</div>
+        <h2 class="section-title section-title-gold">Nuestra solución</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="solution-card">
+          <div style="font-size:3rem;margin-bottom:16px;">🏆</div>
+          <p class="text-sm text-slate-300 leading-relaxed">Competencia FC 2026 que une a 48 empresas en formato mundialista, creando rivalidad sana y engagement entre equipos corporativos de toda la industria.</p>
+        </div>
+        <div class="solution-card">
+          <div style="font-size:3rem;margin-bottom:16px;">🤝</div>
+          <p class="text-sm text-slate-300 leading-relaxed">Networking estratégico y presencia de marcas con visibilidad directa ante +300 asistentes VIP, directivos e ingenieros de empresas líderes en la región.</p>
+        </div>
+        <div class="solution-card">
+          <div style="font-size:3rem;margin-bottom:16px;">⭐</div>
+          <p class="text-sm text-slate-300 leading-relaxed">Experiencia premium con terraza VIP, zona gaming, pantallas en vivo y ambiente mundialista que transforma el networking tradicional en algo memorable.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIMENSIÓN Y PERFIL -->
+  <section class="py-20 px-5">
+    <div class="max-w-5xl mx-auto">
+      <div class="mb-10">
+        <div class="subtitle-tag mb-4" style="display:inline-flex;">AUDIENCIA</div>
+        <h2 class="section-title section-title-gold">Dimensión y perfil</h2>
+      </div>
+      <div class="glass-gold rounded-2xl p-8 mb-8">
+        <p class="text-lg text-slate-200 leading-relaxed" style="font-family:'Space Grotesk',sans-serif;">
+          +48 empresas participantes compitiendo en formato mundialista. +300 asistentes VIP confirmados para la experiencia premium. Perfil de participantes: <strong style="color:#FBBF24;">Directivos, Gerentes, Ingenieros, Compras y Recursos Humanos</strong> de la industria manufacturera.
+        </p>
+      </div>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="glass rounded-2xl p-6 text-center glass-hover">
+          <div style="font-size:2rem;margin-bottom:8px;">👔</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#FBBF24;">Directivos</div>
+          <div class="text-xs text-slate-500 mt-1">y Gerentes</div>
+        </div>
+        <div class="glass rounded-2xl p-6 text-center glass-hover">
+          <div style="font-size:2rem;margin-bottom:8px;">⚙️</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#FBBF24;">Ingenieros</div>
+          <div class="text-xs text-slate-500 mt-1">Manufactura</div>
+        </div>
+        <div class="glass rounded-2xl p-6 text-center glass-hover">
+          <div style="font-size:2rem;margin-bottom:8px;">📋</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#FBBF24;">Compras / RH</div>
+          <div class="text-xs text-slate-500 mt-1">Industria</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODELO DE NEGOCIO -->
+  <section class="py-16 px-5" style="background:rgba(251,191,36,0.02);">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-10">
+        <div class="subtitle-tag mb-4" style="display:inline-flex;">PARTICIPACIÓN</div>
+        <h2 class="section-title section-title-gold">Modelo de negocio</h2>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="model-item"><span class="model-num">01</span><span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">Inscripción empresa</span></div>
+        <div class="model-item"><span class="model-num">02</span><span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">Acceso VIP</span></div>
+        <div class="model-item"><span class="model-num">03</span><span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">Patrocinios</span></div>
+        <div class="model-item"><span class="model-num">04</span><span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">Publicidad</span></div>
+        <div class="model-item"><span class="model-num">05</span><span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">Activaciones</span></div>
+        <div class="model-item"><span class="model-num">06</span><span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">Nivel Empresa</span></div>
+        <div class="model-item"><span class="model-num">07</span><span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">Nivel VIP</span></div>
+        <div class="model-item"><span class="model-num">08</span><span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">Nivel Sponsor</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALOR PARA EMPRESAS Y SPONSORS -->
+  <section class="py-20 px-5">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-12">
+        <div class="subtitle-tag mb-4" style="display:inline-flex;">BENEFICIOS</div>
+        <h2 class="section-title section-title-gold">Valor para empresas y sponsors</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="value-card">
+          <div style="font-size:2rem;margin-bottom:12px;">🏭</div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#FBBF24;margin-bottom:8px;font-size:0.9rem;letter-spacing:0.05em;text-transform:uppercase;">Para Empresas</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Posicionamiento de marca en la industria. Generación de relaciones estratégicas. Employer branding diferenciado.</p>
+        </div>
+        <div class="value-card" style="border-color:rgba(251,191,36,0.2);background:rgba(251,191,36,0.04);">
+          <div style="font-size:2rem;margin-bottom:12px;">🔗</div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#FBBF24;margin-bottom:8px;font-size:0.9rem;letter-spacing:0.05em;text-transform:uppercase;">Conexión</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Networking real con directivos y tomadores de decisiones. Integración de equipos de trabajo entre organizaciones.</p>
+        </div>
+        <div class="value-card">
+          <div style="font-size:2rem;margin-bottom:12px;">📣</div>
+          <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:#FBBF24;margin-bottom:8px;font-size:0.9rem;letter-spacing:0.05em;text-transform:uppercase;">Para Sponsors</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Exposición directa a la industria. Generación de leads calificados. Asociación con innovación y liderazgo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCIA ÚNICA -->
+  <section class="py-20 px-5" style="background:rgba(251,191,36,0.02);">
+    <div class="max-w-5xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div>
+          <div class="subtitle-tag mb-5" style="display:inline-flex;">PREMIUM HIGH TECH EVENT</div>
+          <h2 class="section-title section-title-gold mb-6">Experiencia única</h2>
+          <p class="text-slate-300 leading-relaxed mb-6" style="font-size:1rem;">
+            No es una expo tradicional ni conferencia. <strong style="color:white;">FC 2026 INDUSTRIA</strong> es Experiencia + Entretenimiento + Negocio.
+          </p>
+          <div class="flex flex-col gap-4">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:10px;height:10px;background:#FBBF24;border-radius:50%;flex-shrink:0;"></div>
+              <span class="text-slate-300 text-sm">Zona Gaming exclusiva</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:10px;height:10px;background:#FBBF24;border-radius:50%;flex-shrink:0;"></div>
+              <span class="text-slate-300 text-sm">Terraza VIP con ambiente mundialista premium</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:10px;height:10px;background:#FBBF24;border-radius:50%;flex-shrink:0;"></div>
+              <span class="text-slate-300 text-sm">Networking estratégico entre líderes de la industria</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:10px;height:10px;background:#FBBF24;border-radius:50%;flex-shrink:0;"></div>
+              <span class="text-slate-300 text-sm">Pantallas en vivo con transmisión del torneo</span>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="glass-gold rounded-2xl p-6 text-center">
+            <div style="font-size:2.5rem;">🎮</div>
+            <div class="text-sm text-slate-400 mt-2">Zona Gaming</div>
+          </div>
+          <div class="glass-gold rounded-2xl p-6 text-center">
+            <div style="font-size:2.5rem;">🌟</div>
+            <div class="text-sm text-slate-400 mt-2">Terraza VIP</div>
+          </div>
+          <div class="glass-gold rounded-2xl p-6 text-center">
+            <div style="font-size:2.5rem;">📺</div>
+            <div class="text-sm text-slate-400 mt-2">Pantallas en Vivo</div>
+          </div>
+          <div class="glass-gold rounded-2xl p-6 text-center">
+            <div style="font-size:2.5rem;">🤝</div>
+            <div class="text-sm text-slate-400 mt-2">Networking</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA COMPRA DE BOLETOS -->
+  <section id="boletos" class="py-24 px-5">
+    <div class="max-w-3xl mx-auto">
+      <div class="cta-section p-12 text-center">
+        <div class="subtitle-tag mb-6" style="display:inline-flex;font-size:1rem;">SÉ PARTE DEL TORNEO</div>
+        <h2 class="section-title section-title-gold mb-4">El futuro del networking<br/>industrial es experiencia</h2>
+        <p class="text-slate-400 mb-2 text-base max-w-lg mx-auto">FC 2026 INDUSTRIA — donde la industria compite, conecta y se posiciona.</p>
+        <p class="text-slate-500 text-sm mb-10">Cd. Juárez, Chihuahua · ANGROUP</p>
+
+        <div class="flex flex-wrap gap-4 justify-center mb-10">
+          <a href="mailto:vinculacion@angroup.mx?subject=Compra%20de%20Boletos%20FC%202026%20INDUSTRIA&body=Hola,%20me%20interesa%20adquirir%20boletos%20para%20el%20evento%20FC%202026%20INDUSTRIA.%20Por%20favor%20envíame%20información%20sobre%20disponibilidad%20y%20precios." class="ticket-btn pulse-gold">
+            <span>🎟️ Comprar Boletos</span>
+          </a>
+          <a href="https://wa.me/526563727555?text=Hola,%20me%20interesa%20comprar%20boletos%20para%20FC%202026%20INDUSTRIA" target="_blank" class="btn-outline px-8 py-4 text-base" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;border-radius:16px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </a>
+        </div>
+
+        <div class="flex flex-wrap gap-6 justify-center">
+          <div class="flex items-center gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:vinculacion@angroup.mx" style="color:#FBBF24;text-decoration:none;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.9rem;">vinculacion@angroup.mx</a>
+          </div>
+          <div class="flex items-center gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FBBF24" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/></svg>
+            <a href="tel:6563727555" style="color:#FBBF24;text-decoration:none;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.9rem;">656 372 7555</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="py-8 px-5 text-center" style="border-top:1px solid rgba(255,255,255,0.06);">
+    <a href="index.html" style="color:#38BDF8;font-family:'Space Grotesk',sans-serif;font-weight:700;text-decoration:none;font-size:1.1rem;">← Volver a ANGROUP</a>
+    <p class="text-xs text-slate-600 mt-4">© 2026 ANGROUP · FC 2026 INDUSTRIA · Cd. Juárez, Chihuahua</p>
+  </footer>
+
+</body>
+</html>
